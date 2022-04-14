@@ -1,0 +1,48 @@
+{%extends 'student_index_base.html'%} {%block content%}
+<div class="tpl-portlet-components">
+    <div class="portlet-title">
+        <div class="caption font-green bold">
+            <span class="am-icon-code"></span>
+        </div>
+        <div class="tpl-portlet-input tpl-fz-ml">
+            <div class="portlet-input input-small input-inline">
+                <div class="input-icon right">
+                    <!-- <i class="am-icon-search"></i> -->
+                    <input type="hidden" class="form-control form-control-solid" placeholder="搜索..."> </div>
+                <form action="/route/{{ usn }}" method="post">
+                    <select name="way" lay-verify="" >
+                        <option value="010">沙河</option>
+                        <option value="001">本部</option>
+                        <option value="100">两地跨越</option>
+                        <input type="submit" value="choose">
+                    </select>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="tpl-block">
+        <div class="">
+            <div class="am-u-sm-12">
+                <div id="container"></div>
+                <div class="control">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="startnode">选择起点：</label>
+                    </div>
+                    <select id="startnode" class="custom-select"></select></br>
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="endnode">选择终点：</label>
+                    </div>
+                    <select id="endnode" class="custom-select"></select></br>
+                    <input type="button" name="click" value="获取最短路径" id="button" class="btn btn-outline-dark">
+                </div>
+                <div id="showdis" class="alert alert-primary" role="alert">路径距离&nbsp输出框</div>
+
+                <div class="font-italic">数据结构课程设计--导航模块 By：翁岳川 杨谕衡 杨叶轩</div>
+                <button type="button" class="btn btn-outline-warning" id="warninginfo">Warning</button>
+                <script type="text/javascript" src="{{ ways }}"></script>
+            </div>
+        </div>
+    </div>
+    <div class="tpl-alert"></div>
+</div>
+{%endblock%}

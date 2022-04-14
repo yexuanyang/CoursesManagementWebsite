@@ -1,0 +1,47 @@
+html{height:100%}
+body {
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+    background-color: #e9ecf3;
+    background-attachment: fixed;
+    background-size: cover;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+#container {
+    position: relative;
+    height: 500px;
+    margin: 10px 10px 0px 10px;
+    border: 2px solid grey;
+}
+.custom-select {
+    width: 13%;
+}
+.control {
+    position: relative;
+    left: 35%;
+    top: 5px;
+}
+.control #button {
+    position: relative;
+    left: 6%;
+}
+.input-group-prepend {
+    float: left;
+}
+.font-italic {
+    position: absolute;
+    left: 2%;
+    bottom: 2%;
+}
+#showdis {
+    position: absolute;
+    bottom: 5%;
+    right: 18%;
+}
+#warninginfo {
+    position: absolute;
+    bottom: 1%;
+    right: 1%;
+}

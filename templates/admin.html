@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.css">
+</head>
+<body>
+
+<table class="table" style="width: 600px; margin: 200px auto; border: #00aeef solid ;">
+    <thead>
+    <tr>
+        <th scope="col">用户</th>
+        <th scope="col">用户名</th>
+        <th scope="col">密码</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    {% if usn != 'admin' %}
+        {% for admin in admins %}
+            <tr>
+                <td>admin</td>
+                <td>{{ admin.usn }}</td>
+                <td>******</td>
+                <td></td>
+                <td></td>
+            </tr>
+        {% endfor %}
+        {% for stu in student %}
+
+            <tr>
+                <td>student</td>
+                <td>{{ stu.usn }}</td>
+                {% if stu.usn == usn %}
+                    <td>{{ stu.pwd }}</td>
+                    <td><a href=""></a></td>
+                    <td><a href="/change?usn={{ stu.usn }}">更新</a></td>
+                {% else %}
+                    <td>******</td>
+                    <td><a href=""></a></td>
+                    <td><a href=""></a></td>
+                {% endif %}
+            </tr>
+
+        {% endfor %}
+    {% else %}
+
+        {% for admin in admins %}
+            <tr>
+                <td>admin</td>
+                <td>{{ admin.usn }}</td>
+                <td>{{ admin.pwd }}</td>
+                <td><a href="/delete?usn={{ admin.usn }}">删除</a></td>
+                <td><a href="/change?usn={{ admin.usn }}">更新</a></td>
+            </tr>
+        {% endfor %}
+        {% for stu in student %}
+
+            <tr>
+                <td>student</td>
+                <td>{{ stu.usn }}</td>
+                <td>{{ stu.pwd }}</td>
+                <td><a href="/delete?usn={{ stu.usn }}">删除</a></td>
+                <td><a href="/change?usn={{ stu.usn }}">更新</a></td>
+            </tr>
+
+        {% endfor %}
+    {% endif %}
+    </tbody>
+</table>
+<a href="/login" id="back" style="margin-left: 35%">更换账号</a>
+</body>
+</html>

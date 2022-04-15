@@ -228,56 +228,55 @@ def out_course_fun_stu():
 @app.route('/route/admin', methods=['POST', 'GET'])
 def route():
     g.uname = session.get('now_user')
-    str_all=["/static/js/qustmap_shahe.js","/static/js/qustmap_headquarter.js"]
-    str_choose="/static/js/qustmap_shahe.js"
+    str_all = ["/static/js/qustmap_shahe.js", "/static/js/qustmap_headquarter.js"]
+    str_choose = "/static/js/qustmap_shahe.js"
     route_in.send()
-    if request.method=='POST': #此时如果是提交
-        way=request.form.get('way')
+    if request.method == 'POST':  # 此时如果是提交
+        way = request.form.get('way')
         print(way)
-        if way=='010':#此时是沙河
-            str_choose=str_all[0]
+        if way == '010':  # 此时是沙河
+            str_choose = str_all[0]
             print(str_choose)
             # render_template('qustmap_student.html',ways=str_choose)
-        elif way=='001':#此时为本部
-            str_choose=str_all[1]
+        elif way == '001':  # 此时为本部
+            str_choose = str_all[1]
             # render_template('qustmap_student.html',ways="/static/js/qustmap_headquarter.js")
-    return render_template('qustmap_admin.html',ways=str_choose,cla4="active",usn="admin")
+    return render_template('qustmap_admin.html', ways=str_choose, cla4="active", usn="admin")
 
 
 @app.route('/route/student', methods=['POST', 'GET'])
 def route_stu():
     g.uname = session.get('now_user')
-    str_all=["/static/js/qustmap_shahe.js","/static/js/qustmap_headquarter.js"]
-    str_choose="/static/js/qustmap_shahe.js"
+    str_all = ["/static/js/qustmap_shahe.js", "/static/js/qustmap_headquarter.js"]
+    str_choose = "/static/js/qustmap_shahe.js"
     route_in.send()
-    if request.method=='POST': #此时如果是提交
-        way=request.form.get('way')
-        if way=='010':#此时是沙河
-            str_choose=str_all[0]
+    if request.method == 'POST':  # 此时如果是提交
+        way = request.form.get('way')
+        if way == '010':  # 此时是沙河
+            str_choose = str_all[0]
             # render_template('qustmap_student.html',ways=str_choose)
-        elif way=='001':#此时为本部
-            str_choose=str_all[1]
+        elif way == '001':  # 此时为本部
+            str_choose = str_all[1]
             # render_template('qustmap_student.html',ways="/static/js/qustmap_headquarter.js")
-    return render_template('qustmap_student.html',ways=str_choose,cla4="active",usn="student")
+    return render_template('qustmap_student.html', ways=str_choose, cla4="active", usn="student")
 
 
 @app.route('/logging/admin', methods=['POST', 'GET'])
 def logging_fun():
     g.uname = session.get('now_user')
-    if (request.method == 'POST'):
+    if request.method == 'POST':
         with open('logging.log', 'r+', encoding='utf-8') as f:
             f.seek(0)
             f.truncate()
-            contents=f.read()
-            a=contents.split('\n')
-        return render_template('admin_new.html',posts=a)
+            contents = f.read()
+            a = contents.split('\n')
+        return render_template('admin_new.html', posts=a)
     else:
         logging_in.send()
         with open('logging.log', 'r', encoding='utf-8') as f:
             contents = f.read()
             a = contents.split('\n')
         return render_template('admin_new.html', posts=a)
-
 
 
 @app.route('/course_inf', methods=['POST', 'GET'])

@@ -18,7 +18,6 @@ student = json.load(student_filePtr)
 courses = json.load(course_filePtr)
 print(admins)
 print(student)
-print("hello world")
 
 @app.route('/')
 def index():

@@ -22,7 +22,7 @@ print(student)
 
 @app.route('/')
 def index():
-    return redirect('/login')
+    return ''
 
 
 @app.route('/login', methods=['GET', 'POST'])

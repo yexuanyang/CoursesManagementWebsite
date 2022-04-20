@@ -12,8 +12,6 @@ app.config['JSON_AS_ASCII'] = False
 admin_filePtr = open("./static/data/admin.json", "r", encoding='utf-8')
 student_filePtr = open("./static/data/stu.json", "r", encoding='utf-8')
 course_filePtr = open("./static/data/course.json", "r", encoding='utf-8')
-# admins = [{"usn": "master", "pwd": "123"}]
-# student = [{"usn": "student", "pwd": "123"}]
 
 admins = json.load(admin_filePtr)
 student = json.load(student_filePtr)
@@ -367,7 +365,7 @@ def show():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True,port=2000)
     student_filePtr.close()
     admin_filePtr.close()
     course_filePtr.close()

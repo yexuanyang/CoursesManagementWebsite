@@ -1,12 +1,14 @@
 from flask import Flask, render_template, request, redirect, g, session
 import setting
 import json
-from signals import logging_in, login_space, in_course, route_in, out_activity
+from signals import logging_in, login_space, in_course, route_in, out_activity, in_course_add, in_course_delete, \
+    in_course_change
 
 app = Flask(__name__)
 
 app.config.from_object(setting)
 app.config['SECRET_KEY'] = 'yyx'
+app.config['JSON_AS_ASCII'] = False
 admin_filePtr = open("./static/data/admin.json", "r", encoding='utf-8')
 student_filePtr = open("./static/data/stu.json", "r", encoding='utf-8')
 course_filePtr = open("./static/data/course.json", "r", encoding='utf-8')
@@ -75,6 +77,7 @@ def register():
             student.append({'usn': usn, 'pwd': pwd})
             fp = open("./static/data/stu.json", "w", encoding='utf-8')
             json.dump(student, fp)
+            fp.close()
 
         else:
             return "密码输入不一致"
@@ -211,10 +214,75 @@ def in_course_fun():
 
 
 @app.route('/in_course/admin/add', methods=['POST', 'GET'])
-def in_course_add():
+def in_course_add_func():
+    print(request.method)
+    if request.method == 'POST':
+        g.uname = session.get('now_user')
+        in_course_add.send()
+        course_name = request.form.get('course_name')
+        teacher = request.form.get('teacher')
+        class_time = request.form.get('class_time')
+        class_location = request.form.get('class_location')
+        telephone = request.form.get('telephone')
+        exam_time = request.form.get('exam_time')
+        newcourse = {"cause_name": course_name, "teacher": teacher, "time": class_time, "location": class_location,
+                     "qq": telephone, "exam_time": exam_time}
+        print(newcourse)
+        courses.append(newcourse)
+        with open('./static/data/course.json', 'w', encoding='utf-8') as fp:
+            json.dump(courses, fp, ensure_ascii=False, separators=('\n,', ':'))
+        return redirect('/in_course/admin')
+
+    return render_template('add_course.html')
+
+
+@app.route('/in_course/admin/delete', methods=['POST', 'GET'])
+def in_course_delete_fun():
     g.uname = session.get('now_user')
-    in_course.send()
-    return render_template('add_course.html', cla2='active', posts=courses)
+    in_course_delete.send()
+    return render_template('change_course.html', )
+
+
+@app.route('/in_course/admin/change', methods=['POST', 'GET'])
+def in_course_change_fun():
+    id1 = request.args.get('id1')
+    cause_name = request.args.get('cause_name')
+    teacher = request.args.get('teacher')
+    time = request.args.get('time')
+    location = request.args.get('location')
+    qq = request.args.get('qq')
+    exam_time = request.args.get('exam_time')
+    print(id1)
+    print(int(id1))
+    print(len(courses))
+
+
+    if request.method == 'GET':
+        if len(courses) == int(id1) - 1:
+            courses.pop()
+        else:
+            courses.pop(int(id1) - 1)
+
+    if request.method == 'POST':
+        g.uname = session.get('now_user')
+        in_course_change.send()
+        course_name = request.form.get('course_name')
+        teacher = request.form.get('teacher')
+        class_time = request.form.get('class_time')
+        class_location = request.form.get('class_location')
+        telephone = request.form.get('telephone')
+        exam_time = request.form.get('exam_time')
+        newcourse = {"cause_name": course_name, "teacher": teacher, "time": class_time, "location": class_location,
+                     "qq": telephone, "exam_time": exam_time}
+        print(newcourse)
+        courses.insert(int(id1)-1, newcourse)
+
+        with open('./static/data/course.json', 'w', encoding='utf-8') as fp:
+            json.dump(courses, fp, ensure_ascii=False, separators=('\n,', ':'))
+
+        return redirect('/in_course/admin')
+    return render_template('change_course.html', cause_name=cause_name, teacher=teacher, time=time,
+                       location=location, qq=qq, exam_time=exam_time)
 
 
 @app.route('/out_course/admin', methods=['POST', 'GET'])

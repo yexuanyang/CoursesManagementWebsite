@@ -1,6 +1,5 @@
 {% extends "index_base.html" %}
 {% block content %}
-    {% block content %}
     <div class="tpl-content-wrapper">
 
         <div class="tpl-portlet-components">
@@ -9,21 +8,12 @@
                     <span class="am-icon-code"></span>
 
                 </div>
-                <span class="delete" style="width: 200px; margin-left: 100px">
-                    <form action="/in_course/admin/add" method="post">
-                        <button style="border-color: #0c80ba; border-radius: 20%" id="delete" type="submit">增加</button>
-                    </form>
-                </span>
-                <span class="delete" style="width: 200px; margin-left: 100px">
-                    <form action="/in_course/admin" method="post">
-                        <button style="border-color: #0c80ba; border-radius: 20%" id="delete" type="submit">删除</button>
-                    </form>
-                </span>
-                <span class="update" style="width: 200px; margin-left: 100px">
-                    <form action="/in_course/admin">
-                        <button style="border-color: #0c80ba; border-radius: 20%" id="update" type="submit">更新</button>
-                    </form>
-                </span>
+                <form action="/in_course/admin/add" method="get">
+                    <span class="add" style="width: 200px; margin-left: 100px">
+                        <button style="border-color: #0c80ba; border-radius: 20%" id="add" type="submit">增加</button>
+                    </span>
+                </form>
+
                 <span class="tpl-portlet-input tpl-fz-ml">
                     <span class="portlet-input input-small input-inline">
                         <span class="input-icon right">
@@ -52,13 +42,15 @@
                                         <td>{{ post.location }}</td>
                                         <td>{{ post.qq }}</td>
                                         <td>{{ post.exam_time }}</td>
+                                        <td><a href="/in_course/admin/change?id1={{ loop.index }}&cause_name={{ post.cause_name }}&teacher={{ post.teacher }}&time={{ post.teacher }}&location={{ post.location }}&qq={{ post.qq }}&exam_time={{ post.exam_time }}">更新
+                                            </a></td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>
                             </table>
 
                             <hr>
-
+                        <button style="border-color: #0c80ba; border-radius: 20%" id="delete" type="submit">删除</button>
                         </form>
                     </div>
 

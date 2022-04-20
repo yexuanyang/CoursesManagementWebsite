@@ -57,6 +57,24 @@ def in_course_into(sender):
         f.write(info + "\n")  # 写入日志信息
 
 
+def in_course_add_into(sender):
+    info = f'{g.uname}增加了课程'
+    with open('logging.log', 'a', encoding='utf-8') as f:  # 打开日志然后写如
+        f.write(info + "\n")  # 写入日志信息
+
+
+def in_course_delete_into(sender):
+    info = f'{g.uname}删除了课程'
+    with open('logging.log', 'a', encoding='utf-8') as f:  # 打开日志然后写如
+        f.write(info + "\n")  # 写入日志信息
+
+
+def in_course_change_into(sender):
+    info = f'{g.uname}更新了课程'
+    with open('logging.log', 'a', encoding='utf-8') as f:  # 打开日志然后写如
+        f.write(info + "\n")  # 写入日志信息
+
+
 def out_activity_into(sender):
     info = f'{g.uname}进入了课外管理系统'
     with open('logging.log', 'a', encoding='utf-8') as f:  # 打开日志然后写如
@@ -72,5 +90,8 @@ def route_in_into(sender):
 logging_in.connect(logging_into)  # 注册这个日志信号
 login_space.connect(login_space_into)  # 注册信号
 in_course.connect(in_course_into)  # 进入了课内信息管理系统
+in_course_add.connect(in_course_add_into)  # 增加了课程
+in_course_delete.connect(in_course_delete_into)  # 删除了课程
+in_course_change.connect(in_course_change_into)  # 更新了课程
 route_in.connect(route_in_into)  # 进入了导航系统
 out_activity.connect(out_activity_into)  # 进入了课外管理系统

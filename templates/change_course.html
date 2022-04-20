@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>添加课程</title>
+    <title>修改课程</title>
     <link rel="stylesheet" href="{{ url_for("static",filename="/css/bootstrap.css") }}">
 </head>
 <body>
@@ -10,28 +10,28 @@
 <div class="input-group mb-3">
     <span class="input-group-text" id="basic-addon1" >课程名</span>
     <input type="text" class="form-control" placeholder="请输入课程名" aria-label="Username"
-           aria-describedby="basic-addon1" name="course_name">
+           aria-describedby="basic-addon1" name="course_name" value="{{ cause_name }}">
 </div>
 <div class="input-group mb-3">
     <span class="input-group-text" id="basic-addon1" >教师</span>
     <input type="text" class="form-control" placeholder="请输入教师" aria-label="Username"
-           aria-describedby="basic-addon1" name="teacher">
+           aria-describedby="basic-addon1" name="teacher" value="{{ teacher }}">
 </div><div class="input-group mb-3">
     <span class="input-group-text" id="basic-addon1" >上课时间</span>
     <input type="text" class="form-control" placeholder="请输入上课时间" aria-label="Username"
-           aria-describedby="basic-addon1" name="class_time">
+           aria-describedby="basic-addon1" name="class_time" value="{{ time }}">
 </div><div class="input-group mb-3">
     <span class="input-group-text" id="basic-addon1" >上课地点</span>
     <input type="text" class="form-control" placeholder="请输入上课地点" aria-label="Username"
-           aria-describedby="basic-addon1" name="class_location">
+           aria-describedby="basic-addon1" name="class_location" value="{{ location }}">
 </div><div class="input-group mb-3">
     <span class="input-group-text" id="basic-addon1" >教师联系方式</span>
     <input type="text" class="form-control" placeholder="请输入教师联系方式" aria-label="Username"
-           aria-describedby="basic-addon1" name="telephone">
+           aria-describedby="basic-addon1" name="telephone" value="{{ qq }}">
 </div><div class="input-group mb-3">
     <span class="input-group-text" id="basic-addon1" >考试时间</span>
     <input type="text" class="form-control" placeholder="请输入考试时间" aria-label="Username"
-           aria-describedby="basic-addon1" name="exam_time">
+           aria-describedby="basic-addon1" name="exam_time" value="{{ exam_time }}">
 </div>
     <div>
         <input class="input-group-text" style="margin-left: 40%" type="submit" value="确定">

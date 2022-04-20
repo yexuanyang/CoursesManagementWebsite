@@ -29,12 +29,12 @@
 
                 <div class="am-g">
                     <div class="am-u-sm-12">
-                        <form class="am-form">
+                        <form class="am-form" action="/in_course/admin/delete" method="post">
                             <table class="am-table am-table-striped am-table-hover table-main">
                                 <tbody>
                                 {% for post in posts %}
                                     <tr>
-                                        <td><input type="checkbox" id="{{ loop.index }}" value="{{ loop.index }}"></td>
+                                        <td><input type="checkbox" name="checklist" value="{{ loop.index }}"></td>
                                         <td>{{ loop.index }}</td>
                                         <td><a href="">{{ post.cause_name }}</a></td>
                                         <td>{{ post.teacher }}</td>

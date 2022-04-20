@@ -240,7 +240,15 @@ def in_course_add_func():
 def in_course_delete_fun():
     g.uname = session.get('now_user')
     in_course_delete.send()
-    return render_template('change_course.html', )
+    delete_index = request.form.getlist('checklist')
+    print(delete_index)
+    print(request.method)
+    for i in delete_index:
+        if int(i) - 1 == len(courses):
+            courses.pop(-1)
+        else:
+            courses.pop(int(i)-1)
+    return render_template('student_course_admin.html', cla2='active', posts=courses)
 
 
 @app.route('/in_course/admin/change', methods=['POST', 'GET'])

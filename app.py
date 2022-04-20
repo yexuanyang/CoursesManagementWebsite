@@ -211,7 +211,7 @@ def in_course_fun():
 
 
 @app.route('/in_course/admin/add', methods=['POST', 'GET'])
-def in_course_fun():
+def in_course_add():
     g.uname = session.get('now_user')
     in_course.send()
     return render_template('add_course.html', cla2='active', posts=courses)

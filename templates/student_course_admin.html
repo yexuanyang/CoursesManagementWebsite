@@ -1,20 +1,29 @@
 {% extends "index_base.html" %}
 {% block content %}
+    {% block content %}
     <div class="tpl-content-wrapper">
 
         <div class="tpl-portlet-components">
             <div class="portlet-title">
                 <div class="caption font-green bold">
                     <span class="am-icon-code"></span>
-                </div>
-                <div class="tpl-portlet-input tpl-fz-ml">
-                    <div class="portlet-input input-small input-inline">
-                        <div class="input-icon right">
-                            <!-- <i class="am-icon-search"></i> -->
-                            <input type="hidden" class="form-control form-control-solid" placeholder="搜索..."></div>
-                    </div>
-                </div>
 
+                </div>
+                <span class="delete" style="width: 200px; margin-left: 100px">
+                    <button style="border-color: #0c80ba; border-radius: 20%" id="delete">删除</button>
+                </span>
+                <span class="update" style="width: 200px; margin-left: 100px">
+                    <button style="border-color: #0c80ba; border-radius: 20%" id="update">更新</button>
+                </span>
+                <span class="tpl-portlet-input tpl-fz-ml">
+                    <span class="portlet-input input-small input-inline">
+                        <span class="input-icon right">
+                            <!-- <i class="am-icon-search"></i> -->
+                            <input type="text" class="form-control form-control-solid" placeholder="搜索...">
+                        </span>
+
+                    </span>
+                </span>
 
             </div>
             <div class="tpl-block">
@@ -26,7 +35,8 @@
                                 <tbody>
                                 {% for post in posts %}
                                     <tr>
-                                        <td><input type="checkbox"></td>
+                                        <td><input type="checkbox" id="{{ loop.index }}" value="{{ loop.index }}"></td>
+                                        <td>{{ loop.index }}</td>
                                         <td><a href="">{{ post.cause_name }}</a></td>
                                         <td>{{ post.teacher }}</td>
                                         <td>{{ post.time }}</td>
@@ -47,9 +57,5 @@
             </div>
             <div class="tpl-alert"></div>
         </div>
-
-
     </div>
-
-</div>
 {% endblock %}

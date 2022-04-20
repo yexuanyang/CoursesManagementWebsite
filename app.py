@@ -19,6 +19,7 @@ courses = json.load(course_filePtr)
 print(admins)
 print(student)
 
+
 @app.route('/')
 def index():
     return redirect('/login')
@@ -177,7 +178,6 @@ def forget():
                     for ad in admins:
                         if usn == ad['usn']:
                             return '权限不足'
-
             return '用户不存在'
         else:
             return '密码输入不一致'

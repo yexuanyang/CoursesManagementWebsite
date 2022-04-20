@@ -8,12 +8,6 @@
                     <span class="am-icon-code"></span>
 
                 </div>
-                <span class="delete" style="width: 200px; margin-left: 100px">
-                    <button style="border-color: #0c80ba; border-radius: 20%" id="delete">删除</button>
-                </span>
-                <span class="update" style="width: 200px; margin-left: 100px">
-                    <button style="border-color: #0c80ba; border-radius: 20%" id="update">更新</button>
-                </span>
                 <span class="tpl-portlet-input tpl-fz-ml">
                     <span class="portlet-input input-small input-inline">
                         <span class="input-icon right">
@@ -34,9 +28,9 @@
                                 <tbody>
                                 {% for post in posts %}
                                     <tr>
-                                        <td><input type="checkbox" id="{{ loop.index }}" value="{{ loop.index }}"></td>
+                                        <td><input type="checkbox" id="{{ loop.index }}" value="{{ post.cause_name }}" name="checkbox"></td>
                                         <td>{{ loop.index }}</td>
-                                        <td><a href="">{{ post.cause_name }}</a></td>
+                                        <td><a href="">{{ post.cause_name}}</a></td>
                                         <td>{{ post.teacher }}</td>
                                         <td>{{ post.time }}</td>
                                         <td>{{ post.location }}</td>

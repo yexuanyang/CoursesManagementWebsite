@@ -210,6 +210,13 @@ def in_course_fun():
     return render_template('student_course_admin.html', cla2='active', posts=courses)
 
 
+@app.route('/in_course/admin/add', methods=['POST', 'GET'])
+def in_course_fun():
+    g.uname = session.get('now_user')
+    in_course.send()
+    return render_template('add_course.html', cla2='active', posts=courses)
+
+
 @app.route('/out_course/admin', methods=['POST', 'GET'])
 def out_course_fun():
     g.uname = session.get('now_user')

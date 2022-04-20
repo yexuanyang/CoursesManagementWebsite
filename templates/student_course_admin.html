@@ -10,10 +10,19 @@
 
                 </div>
                 <span class="delete" style="width: 200px; margin-left: 100px">
-                    <button style="border-color: #0c80ba; border-radius: 20%" id="delete">删除</button>
+                    <form action="/in_course/admin/add" method="post">
+                        <button style="border-color: #0c80ba; border-radius: 20%" id="delete" type="submit">增加</button>
+                    </form>
+                </span>
+                <span class="delete" style="width: 200px; margin-left: 100px">
+                    <form action="/in_course/admin" method="post">
+                        <button style="border-color: #0c80ba; border-radius: 20%" id="delete" type="submit">删除</button>
+                    </form>
                 </span>
                 <span class="update" style="width: 200px; margin-left: 100px">
-                    <button style="border-color: #0c80ba; border-radius: 20%" id="update">更新</button>
+                    <form action="/in_course/admin">
+                        <button style="border-color: #0c80ba; border-radius: 20%" id="update" type="submit">更新</button>
+                    </form>
                 </span>
                 <span class="tpl-portlet-input tpl-fz-ml">
                     <span class="portlet-input input-small input-inline">

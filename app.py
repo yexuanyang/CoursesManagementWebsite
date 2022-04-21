@@ -511,12 +511,15 @@ def logging_fun():
             f.truncate()
             contents = f.read()
             a = contents.split('\n')
+            a.reverse()
         return render_template('admin_new.html', posts=a)
     else:
         logging_in.send()
         with open('logging.log', 'r', encoding='utf-8') as f:
             contents = f.read()
+            contents.split('\n')
             a = contents.split('\n')
+            a.reverse()
         return render_template('admin_new.html', posts=a)
 
 

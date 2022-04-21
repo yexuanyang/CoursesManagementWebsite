@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>添加课外活动</title>
+    <link rel="stylesheet" href="{{ url_for("static",filename="/css/bootstrap.css") }}">
+</head>
+<body>
+<form action="" style="width: 500px;margin:200px auto" method="post">
+<div class="input-group mb-3">
+    <span class="input-group-text" id="basic-addon1" >活动名称</span>
+    <input type="text" class="form-control" placeholder="请输入活动名称" aria-label="Username"
+           aria-describedby="basic-addon1" name="activity_name">
+</div>
+<div class="input-group mb-3">
+    <span class="input-group-text" id="basic-addon1" >活动日期</span>
+    <input type="text" class="form-control" placeholder="请输入活动日期" aria-label="Username"
+           aria-describedby="basic-addon1" name="activity_time">
+</div><div class="input-group mb-3">
+    <span class="input-group-text" id="basic-addon1" >开始时间</span>
+    <input type="text" class="form-control" placeholder="请输入开始时间" aria-label="Username"
+           aria-describedby="basic-addon1" name="begin_time">
+</div><div class="input-group mb-3">
+    <span class="input-group-text" id="basic-addon1" >持续时间</span>
+    <input type="text" class="form-control" placeholder="请输入持续时间" aria-label="Username"
+           aria-describedby="basic-addon1" name="last">
+</div><div class="input-group mb-3">
+    <span class="input-group-text" id="basic-addon1" >活动人数</span>
+    <input type="text" class="form-control" placeholder="请输入活动人数" aria-label="Username"
+           aria-describedby="basic-addon1" name="persons_num">
+</div><div class="input-group mb-3">
+    <span class="input-group-text" id="basic-addon1" >活动地点</span>
+    <input type="text" class="form-control" placeholder="请输入活动地点" aria-label="Username"
+           aria-describedby="basic-addon1" name="location">
+</div>
+    <div>
+        <input class="input-group-text" style="margin-left: 40%" type="submit" value="确定">
+    </div>
+</form>
+
+</body>
+</html>

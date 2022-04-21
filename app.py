@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, g, session
 import setting
 import json
 from signals import logging_in, login_space, in_course, route_in, out_activity, in_course_add, in_course_delete, \
-    in_course_change
+    in_course_change, out_activity_set
 
 app = Flask(__name__)
 
@@ -12,12 +12,15 @@ app.config['JSON_AS_ASCII'] = False
 admin_filePtr = open("./static/data/admin.json", "r", encoding='utf-8')
 student_filePtr = open("./static/data/stu.json", "r", encoding='utf-8')
 course_filePtr = open("./static/data/course.json", "r", encoding='utf-8')
+out_course_filePtr = open("./static/data/out_course.json", "r", encoding='utf-8')
 
 admins = json.load(admin_filePtr)
 student = json.load(student_filePtr)
 courses = json.load(course_filePtr)
+out_courses = json.load(out_course_filePtr)
 print(admins)
 print(student)
+print(out_courses)
 
 
 @app.route('/')
@@ -74,7 +77,7 @@ def register():
         if pwd1 == pwd:
             student.append({'usn': usn, 'pwd': pwd})
             fp = open("./static/data/stu.json", "w", encoding='utf-8')
-            json.dump(student, fp)
+            json.dump(student, fp, ensure_ascii=False, separators=(',', ':'))
             fp.close()
 
         else:
@@ -108,7 +111,7 @@ def delete():
             student.remove(stu)
             print(student)
             fp = open("./static/data/stu.json", "w", encoding='utf-8')
-            json.dump(student, fp)
+            json.dump(student, fp, ensure_ascii=False, separators=(',', ':'))
             return redirect('/admin/admin')
 
     for ad in admins:
@@ -118,7 +121,7 @@ def delete():
             admins.remove(ad)
             print(ad)
             fp = open("./static/data/admin.json", "w", encoding='utf-8')
-            json.dump(admins, fp)
+            json.dump(admins, fp, ensure_ascii=False, separators=(',', ':'))
             return redirect('/admin/admin')
 
     return render_template('admin.html', student=student, admins=admins)
@@ -139,7 +142,7 @@ def change():
                 if usn == stu['usn']:
                     stu['pwd'] = pwd
                     fp = open("./static/data/stu.json", "w", encoding='utf-8')
-                    json.dump(student, fp)
+                    json.dump(student, fp, ensure_ascii=False, separators=(',', ':'))
                     print(stu)
         else:
             return '密码输入不一致'
@@ -173,7 +176,7 @@ def forget():
                 if usn == stu['usn']:
                     stu['pwd'] = pwd
                     fp = open("./static/data/stu.json", "w", encoding='utf-8')
-                    json.dump(student, fp)
+                    json.dump(student, fp, ensure_ascii=False, separators=(',', ':'))
                     return redirect('/admin/' + usn)
                 else:
                     for ad in admins:
@@ -245,8 +248,10 @@ def in_course_delete_fun():
         if int(i) - 1 == len(courses):
             courses.pop(-1)
         else:
-            courses.pop(int(i)-1)
-    return render_template('student_course_admin.html', cla2='active', posts=courses)
+            courses.pop(int(i) - 1)
+    with open('./static/data/course.json', "w", encoding='utf-8') as fp:
+        json.dump(courses, fp, ensure_ascii=False, separators=('\n,', ':'))
+    return redirect('/in_course/admin')
 
 
 @app.route('/in_course/admin/change', methods=['POST', 'GET'])
@@ -261,7 +266,6 @@ def in_course_change_fun():
     print(id1)
     print(int(id1))
     print(len(courses))
-
 
     if request.method == 'GET':
         if len(courses) == int(id1) - 1:
@@ -281,28 +285,185 @@ def in_course_change_fun():
         newcourse = {"cause_name": course_name, "teacher": teacher, "time": class_time, "location": class_location,
                      "qq": telephone, "exam_time": exam_time}
         print(newcourse)
-        courses.insert(int(id1)-1, newcourse)
+        courses.insert(int(id1) - 1, newcourse)
 
         with open('./static/data/course.json', 'w', encoding='utf-8') as fp:
             json.dump(courses, fp, ensure_ascii=False, separators=('\n,', ':'))
 
         return redirect('/in_course/admin')
     return render_template('change_course.html', cause_name=cause_name, teacher=teacher, time=time,
-                       location=location, qq=qq, exam_time=exam_time)
+                           location=location, qq=qq, exam_time=exam_time)
 
 
 @app.route('/out_course/admin', methods=['POST', 'GET'])
 def out_course_fun():
     g.uname = session.get('now_user')
     out_activity.send()
-    return render_template('admin_new.html', cla3='activate')
+    return render_template('student_out_course_admin.html', cla3='activate', posts=out_courses)
+
+
+@app.route('/out_course/admin/add', methods=['POST', 'GET'])
+def out_course_add_fun():
+    print(request.method)
+    if request.method == 'POST':
+        g.uname = session.get('now_user')
+        out_activity_set.send()
+        activity_name = request.form.get('activity_name')
+        activity_time = request.form.get('activity_time')
+        begin_time = request.form.get('begin_time')
+        last = request.form.get('last')
+        persons_num = request.form.get('persons_num')
+        location = request.form.get('location')
+        new_out_course = {'activity_name': activity_name, 'activity_time': activity_time, 'begin_time': begin_time,
+                          'last': last,
+                          'persons_num': persons_num, 'location': location}
+        out_courses.append(new_out_course)
+        print(out_courses)
+        with open('./static/data/out_course.json', "w", encoding='utf-8') as fp:
+            json.dump(out_courses, fp, ensure_ascii=False, separators=('\n,', ':'))
+        return redirect('/out_course/admin')
+    return render_template('add_out_course.html', cla3='active', posts=out_courses)
+
+
+@app.route('/out_course/admin/delete', methods=['POST', 'GET'])
+def out_course_del_fun():
+    g.uname = session.get('now_user')
+    out_activity.send()
+    delete_list = request.form.getlist('checklist')
+    print(delete_list)
+    for i in delete_list:
+        if int(i) - 1 == len(delete_list):
+            out_courses.pop(-1)
+        else:
+            out_courses.pop(int(i) - 1)
+    with open('./static/data/out_course.json', "w", encoding='utf-8') as fp:
+        json.dump(out_courses, fp, ensure_ascii=False, separators=('\n,', ':'))
+    return redirect('/out_course/admin')
+
+
+@app.route('/out_course/admin/change', methods=['POST', 'GET'])
+def out_course_change_fun():
+    id2 = request.args.get('id2')
+    activity_name = request.args.get('activity_name')
+    activity_time = request.args.get('activity_time')
+    begin_time = request.args.get('begin_time')
+    last = request.args.get('last')
+    persons_num = request.args.get('persons_num')
+    location = request.args.get('location')
+
+    if request.method == 'GET':
+        if int(id2) - 1 == len(out_courses):
+            out_courses.pop(-1)
+        else:
+            out_courses.pop(int(id2) - 1)
+
+    if request.method == 'POST':
+        g.uname = session.get('now_user')
+        out_activity_set.send()
+        id1 = request.form.get('id1')
+        activity_name = request.form.get('activity_name')
+        activity_time = request.form.get('activity_time')
+        begin_time = request.form.get('begin_time')
+        last = request.form.get('last')
+        persons_num = request.form.get('persons_num')
+        location = request.form.get('location')
+        new_out_course = {'activity_name': activity_name, 'activity_time': activity_time, 'begin_time': begin_time,
+                          'last': last,
+                          'persons_num': persons_num, 'location': location}
+        out_courses.insert(int(id2) - 1, new_out_course)
+
+        with open('./static/data/out_course.json', "w", encoding='utf-8') as fp:
+            json.dump(out_courses, fp, ensure_ascii=False, separators=('\n,', ':'))
+        return redirect('/out_course/admin')
+
+    return render_template('change_out_course.html', activity_name=activity_name, activity_time=activity_time,
+                           begin_time=begin_time,
+                           last=last,
+                           persons_num=persons_num, location=location)
 
 
 @app.route('/out_course/student', methods=['POST', 'GET'])
 def out_course_fun_stu():
     g.uname = session.get('now_user')
     out_activity.send()
-    return render_template('student_course.html', cla4='activate')
+    return render_template('student_out_course.html', cla3='active', posts=out_courses)
+
+
+@app.route('/out_course/student/add', methods=['POST', 'GET'])
+def out_course_add_fun_stu():
+    if request.method == 'POST':
+        g.uname = session.get('now_user')
+        out_activity_set.send()
+        activity_name = request.form.get('activity_name')
+        activity_time = request.form.get('activity_time')
+        begin_time = request.form.get('begin_time')
+        last = request.form.get('last')
+        persons_num = request.form.get('persons_num')
+        location = request.form.get('location')
+        new_out_course = {'activity_name': activity_name, 'activity_time': activity_time, 'begin_time': begin_time,
+                          'last': last,
+                          'persons_num': persons_num, 'location': location}
+        out_courses.append(new_out_course)
+        with open('./static/data/out_course.json', "w", encoding='utf-8') as fp:
+            json.dump(out_courses, fp, ensure_ascii=False, separators=('\n,', ':'))
+        return redirect('/out_course/student')
+    return render_template('add_out_course.html', cla3='activate', posts=out_courses)
+
+
+@app.route('/out_course/student/delete', methods=['POST', 'GET'])
+def out_course_del_fun_stu():
+    g.uname = session.get('now_user')
+    out_activity_set.send()
+    delete_list = request.form.getlist('checklist')
+    print(delete_list)
+    for i in delete_list:
+        if int(i) - 1 == len(delete_list):
+            out_courses.pop(-1)
+        else:
+            out_courses.pop(int(i) - 1)
+    with open('./static/data/out_course.json', "w", encoding='utf-8') as fp:
+        json.dump(out_courses, fp, ensure_ascii=False, separators=('\n,', ':'))
+    return redirect('/out_course/student')
+
+
+@app.route('/out_course/student/change', methods=['POST', 'GET'])
+def out_course_change_fun_stu():
+    id1 = request.args.get('id1')
+    activity_name = request.args.get('activity_name')
+    activity_time = request.args.get('activity_time')
+    begin_time = request.args.get('begin_time')
+    last = request.args.get('last')
+    persons_num = request.args.get('persons_num')
+    location = request.args.get('location')
+
+    if request.method == 'GET':
+        if int(id1) - 1 == len(out_courses):
+            out_courses.pop(-1)
+        else:
+            out_courses.pop(int(id1) - 1)
+
+    if request.method == 'POST':
+        g.uname = session.get('now_user')
+        out_activity_set.send()
+        activity_name = request.form.get('activity_name')
+        activity_time = request.form.get('activity_time')
+        begin_time = request.form.get('begin_time')
+        last = request.form.get('last')
+        persons_num = request.form.get('persons_num')
+        location = request.form.get('location')
+        new_out_course = {'activity_name': activity_name, 'activity_time': activity_time, 'begin_time': begin_time,
+                          'last': last,
+                          'persons_num': persons_num, 'location': location}
+        out_courses.insert(int(id1) - 1, new_out_course)
+
+        with open('./static/data/out_course.json', "w", encoding='utf-8') as fp:
+            json.dump(out_courses, fp, ensure_ascii=False, separators=('\n,', ':'))
+        return redirect('/out_course/student')
+
+    return render_template('change_out_course.html', activity_name=activity_name, activity_time=activity_time,
+                           begin_time=begin_time,
+                           last=last,
+                           persons_num=persons_num, location=location)
 
 
 @app.route('/route/admin', methods=['POST', 'GET'])
@@ -365,7 +526,8 @@ def show():
 
 
 if __name__ == '__main__':
-    app.run(debug=True,port=2000)
+    app.run(debug=True, port=2000)
     student_filePtr.close()
     admin_filePtr.close()
     course_filePtr.close()
+    out_course_filePtr.close()

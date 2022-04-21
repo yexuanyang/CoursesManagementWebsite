@@ -16,11 +16,12 @@
 
                 <span class="tpl-portlet-input tpl-fz-ml">
                     <span class="portlet-input input-small input-inline">
-                        <span class="input-icon right">
-                            <input type="text" class="form-control form-control-solid" placeholder="搜索...">
-                        </span>
+                         <input class="layui-input" name="exhibitionInput" autocomplete="off" placeholder="搜索..." id="myInput">
+                        <button type="button" class="layui-btn" onclick="myFunction()">利用课程名称进行搜索</button>
+                        <button type="button" class="layui-btn layui-btn-normal" onclick="myFunction1()">搜索任课教师</button>
                     </span>
                 </span>
+
 
             </div>
             <div class="tpl-block">
@@ -30,7 +31,8 @@
                         <form class="am-form" action="/in_course/admin/delete" method="post">
                             <table class="am-table am-table-striped am-table-hover table-main" lay-filter="demo">
                                 <thead>
-                                <tr>
+                                <tr class="header">
+                                    {#这里是头#}
                                         <th lay-data="{field:'checkbox',width:70}">&nbsp;</th>
                                         <th lay-data="{field:'index',sort:true,width:80}">序号</th>
                                         <th lay-data="{field:'name', sort:true,width:200}">课程名称</th>
@@ -42,7 +44,7 @@
                                         <th lay-data="{field:'operation',width:80}">操作</th>
                                 </tr>
                               </thead>
-                                <tbody>
+                                <tbody id="myData">
                                 {% for post in posts %}
                                     <tr>
                                         <td><input type="checkbox" name="checklist" value="{{ loop.index }}"></td>
@@ -69,16 +71,83 @@
             <div class="tpl-alert"></div>
         </div>
     </div>
+    <table id="myTable" style="display: none;float: left">
+    {% for post in posts %}
+        <tr>
+            <td><input type="checkbox" name="checklist" value="{{ loop.index }}"></td>
+            <td>{{ loop.index }}</td>
+            <td><a href="">{{ post.cause_name }}</a></td>
+            <td>{{ post.teacher }}</td>
+            <td>{{ post.time }}</td>
+            <td>{{ post.location }}</td>
+            <td>{{ post.qq }}</td>
+            <td>{{ post.exam_time }}</td>
+            <td><a href="/in_course/admin/change?id1={{ loop.index }}&cause_name={{ post.cause_name }}&teacher={{ post.teacher }}&time={{ post.teacher }}&location={{ post.location }}&qq={{ post.qq }}&exam_time={{ post.exam_time }}">更新
+            </a></td>
+        </tr>
+    {% endfor %}
+    </table>
 {% endblock %}
 {% block otherscripts %}
 <script>
-var table = layui.table;
+var t = layui.table;
 
 //转换静态表格
-table.init('demo', {
+t.init('demo', {
   height: 500 //设置高度
   ,limit: 10 //注意：请务必确保 limit 参数（默认：10）是与你服务端限定的数据条数一致
+    ,page:true //开启分页
 });
-
+//表格
+function myFunction() {
+    // 声明变量
+    var input, filter, table, tr, td, i;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    list="";
+    // 循环表格每一行，查找匹配项
+    for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[2];
+        if (td) {
+            if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                list=list+"<tr>"+"\n"+tr[i].innerHTML+"\n"+"</tr>"+"\n"
+            }
+        }
+    }
+    var mydata=document.getElementById("myData");
+    mydata.innerHTML=list;
+    t.init('demo', { //重新加载
+            height: 500 //设置高度
+            ,limit: 10 //注意：请务必确保 limit 参数（默认：10）是与你服务端限定的数据条数一致
+            ,page:true //开启分页
+});
+}
+function myFunction1() {
+    // 声明变量
+    var input, filter, table, tr, td, i;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    list="";
+    // 循环表格每一行，查找匹配项
+    for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[3];
+        if (td) {
+            if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                list=list+"<tr>"+"\n"+tr[i].innerHTML+"\n"+"</tr>"+"\n"
+            }
+        }
+    }
+    var mydata=document.getElementById("myData");
+    mydata.innerHTML=list;
+    t.init('demo', { //重新加载
+            height: 500 //设置高度
+            ,limit: 10 //注意：请务必确保 limit 参数（默认：10）是与你服务端限定的数据条数一致
+            ,page:true //开启分页
+});
+}
 </script>
 {% endblock %}

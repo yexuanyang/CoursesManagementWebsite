@@ -21,7 +21,7 @@ out_courses = json.load(out_course_filePtr)
 print(admins)
 print(student)
 print(out_courses)
-
+time_list=[10,0,0]
 
 @app.route('/')
 def index():
@@ -471,19 +471,24 @@ def route():
     g.uname = session.get('now_user')
     str_all = ["/static/js/qustmap_shahe.js", "/static/js/qustmap_headquarter.js"]
     str_choose = "/static/js/qustmap_shahe.js"
+    template_chose="qustmap_admin.html"
     route_in.send()
+    global time_list
     if request.method == 'POST':  # 此时如果是提交
         way = request.form.get('way')
-        print(way)
         if way == '010':  # 此时是沙河
+            template_chose = "qustmap_admin.html"
             str_choose = str_all[0]
             print(str_choose)
-            # render_template('qustmap_student.html',ways=str_choose)
         elif way == '001':  # 此时为本部
+            template_chose = "qustmap_admin.html"
             str_choose = str_all[1]
-            # render_template('qustmap_student.html',ways="/static/js/qustmap_headquarter.js")
-    return render_template('qustmap_admin.html', ways=str_choose, cla4="active", usn="admin")
-
+        elif way=='100':#此时是两地跨越
+            template_chose="one_to_one_admin.html"
+    if(template_chose=="qustmap_admin.html"):
+        return render_template(template_chose, ways=str_choose, cla4="active", usn="admin")
+    else:
+        return render_template(template_chose,cla4="active",usn="admin",hour=time_list[0],minute=time_list[1],second=time_list[2])
 
 @app.route('/route/student', methods=['POST', 'GET'])
 def route_stu():
@@ -495,10 +500,8 @@ def route_stu():
         way = request.form.get('way')
         if way == '010':  # 此时是沙河
             str_choose = str_all[0]
-            # render_template('qustmap_student.html',ways=str_choose)
         elif way == '001':  # 此时为本部
             str_choose = str_all[1]
-            # render_template('qustmap_student.html',ways="/static/js/qustmap_headquarter.js")
     return render_template('qustmap_student.html', ways=str_choose, cla4="active", usn="student")
 
 
@@ -524,6 +527,12 @@ def logging_fun():
 def show():
     return
 
+@app.route('/time_control',methods=['POST']) #用于控制时间 ，所有的时间系统都采用当前的操作
+def time_control():
+    time=request.form.get('time')
+    global  time_list
+    time_list=json.loads(time) #得到了时间列表
+    return "time_yes"
 
 if __name__ == '__main__':
     app.run(debug=True, port=2000)

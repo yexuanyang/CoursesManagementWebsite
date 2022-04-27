@@ -1,0 +1,177 @@
+{%extends 'index_base.html'%} {%block content%}
+    <div class="tpl-portlet-components">
+    <div class="portlet-title">
+        <div class="caption font-green bold">
+            <span class="am-icon-code"></span>
+        </div>
+        <div class="tpl-portlet-input tpl-fz-ml">
+            <div class="portlet-input input-small input-inline">
+                <div class="input-icon right">
+                    <!-- <i class="am-icon-search"></i> -->
+                    <input type="hidden" class="form-control form-control-solid" placeholder="搜索..."> </div>
+                <form action="/route/{{ usn }}" method="post">
+                    <select name="way" lay-verify="" >
+                        <option value="010">沙河</option>
+                        <option value="001">本部</option>
+                        <option value="100">本部到沙河</option>
+                        <input type="submit" value="choose">
+                    </select>
+                </form>
+            </div>
+        </div>
+    </div>
+        <div class="tpl-block">
+        <div class="">
+                <span>当前时间：</span>
+                <p><span id="hour">{{ hour }}</span> : <span id="min">{{ minute }}</span> : <span id="second">{{ second }}</span></p>
+{#                注意这里的问题 可以使用开始暂停，但是使用了加速之后会出现问题 暂时没有解决 所以这里暂时不让使用#}
+                <button id="act" class="layui-btn">开始</button>
+                <button id="quicker" class="layui-btn layui-btn-normal layui-btn-disabled">加速</button>
+                <button id="pause" class="layui-btn layui-btn-warm">暂停</button>
+                    <form class="layui-form" action="" style="width: 1000px;">
+                    <div class="layui-form-item">
+                    <label style="position:relative; top: 33px">您的所在地：</label>
+                    <div class="layui-input-block" style="width: 200px">
+                    <select name="city" lay-verify="required" id="location">
+                        <option value=""></option>
+                        <option value="0">沙河</option>
+                        <option value="1">本部</option>
+                    </select>
+                    </div>
+                    </div>
+                        <button id="confirm" class="layui-btn layui-btn-warm">选择</button>
+                    </form>
+                    <hr>
+                <div class="result_container">
+                    <button id="show_schoolbus" class="layui-btn layui-btn-normal">展示校车时刻表</button>
+                    <button id="show_bus" class="layui-btn layui-btn-normal">展示公交时刻表</button>
+                    <button id="show_busroute" class="layui-btn layui-btn-normal">展示公交线路图</button>
+                </div>
+                <div class="time_table" id="timetable_schoolbus" style="display: none; width:200px; float:left;">
+                    <table class="layui-table">
+                        <colgroup>
+                        <col>
+                        <col>
+                        <col>
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th>校车时间</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>10:00</td>
+                    </tr>
+                    <tr>
+                    <td>12:00</td>
+                    </tr>
+                    <tr>
+                    <td>13:00</td>
+                    </tr>
+                    <tr>
+                    <td>15:00</td>
+                    </tr>
+                    <tr>
+                    <td>17:00</td>
+                    </tr>
+                    </tbody>
+                    </table>
+                </div>
+            <div class="time_table" id="timetable_bus" style="display: none;float: left;width:200px;">
+                    <table class="layui-table">
+                        <colgroup>
+                        <col>
+                        <col>
+                        <col>
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th>公交时间</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>5:30</td>
+                    </tr>
+                    <tr>
+                        <td>6:30</td>
+                    </tr>
+                    <tr>
+                        <td>7:00</td>
+                    </tr>
+                    <tr>
+                        <td>7:30</td>
+                    </tr>
+                    <tr>
+                        <td>8:00</td>
+                    </tr>
+                    <tr>
+                        <td>8:30</td>
+                    </tr>
+                    <tr>
+                        <td>9:00</td>
+                    </tr>
+                    <tr>
+                        <td>9:30</td>
+                    </tr>
+                    <tr>
+                        <td>10:00</td>
+                    </tr>
+                    <tr>
+                        <td>11:00</td>
+                    </tr>
+                    <tr>
+                        <td>12:00</td>
+                    </tr>
+                    <tr>
+                        <td>13:00</td>
+                    </tr>
+                    <tr>
+                        <td>14:00</td>
+                    </tr>
+                    <tr>
+                        <td>15:00</td>
+                    </tr>
+                    <tr>
+                        <td>16:00</td>
+                    </tr>
+                    <tr>
+                        <td>17:00</td>
+                    </tr>
+                    <tr>
+                        <td>17:30</td>
+                    </tr>
+                    <tr>
+                        <td>18:00</td>
+                    </tr>
+                    <tr>
+                        <td>18:30</td>
+                    </tr>
+                    <tr>
+                        <td>19:00</td>
+                    </tr>
+                    <tr>
+                        <td>19:30</td>
+                    </tr>
+                    <tr>
+                        <td>20:00</td>
+                    </tr>
+                    <tr>
+                        <td>20:30</td>
+                    </tr>
+                    <tr>
+                        <td>21:30</td>
+                    </tr>
+                    <tr>
+                        <td>22:30</td>
+                    </tr>
+                    </tbody>
+                    </table>
+                </div>
+                </div>
+{#            这里经过思考准备采用ajax向后端定时传递数据的方法进行#}
+        </div>
+    </div>
+
+{%endblock%}

@@ -21,13 +21,22 @@
         </div>
     </div>
         <div class="tpl-block">
-        <div class="">
-                <span>当前时间：</span>
-                <p><span id="hour">{{ hour }}</span> : <span id="min">{{ minute }}</span> : <span id="second">{{ second }}</span></p>
-{#                注意这里的问题 可以使用开始暂停，但是使用了加速之后会出现问题 暂时没有解决 所以这里暂时不让使用#}
-                <button id="act" class="layui-btn">开始</button>
-                <button id="quicker" class="layui-btn layui-btn-normal layui-btn-disabled">加速</button>
-                <button id="pause" class="layui-btn layui-btn-warm">暂停</button>
+
+        <div>
+            <div class="layui-container" id="result_card">
+                <div class="layui-row">
+                    <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+                        公交:您需要乘坐<span id="bus_need"></span>时的公交需要时间:<span id="bus_needtime"></span>分钟
+                    </div>
+                </div>
+                <div class="layui-row">
+                    <div class="layui-col-xs6 layui-col-sm6 layui-col-md6"style="width: 100px>
+                    <div class="layui-col-xs6 layui-col-sm6 layui-col-md6" style="width: 100px">
+                        校车:您可在乘坐<span id="schoolbus_need"></span>需要时间:<span id="schoolbus_needtime"></span>分钟
+                    </div>
+                    </div>
+                </div>
+            </div>
                     <form class="layui-form" action="" style="width: 1000px;">
                     <div class="layui-form-item">
                     <label style="position:relative; top: 33px">您的所在地：</label>
@@ -39,10 +48,10 @@
                     </select>
                     </div>
                     </div>
-                        <button id="confirm" class="layui-btn layui-btn-warm">选择</button>
                     </form>
+            <button id="confirm" class="layui-btn layui-btn-warm">选择</button>
                     <hr>
-                <div class="result_container">
+                <div>
                     <button id="show_schoolbus" class="layui-btn layui-btn-normal">展示校车时刻表</button>
                     <button id="show_bus" class="layui-btn layui-btn-normal">展示公交时刻表</button>
                     <button id="show_busroute" class="layui-btn layui-btn-normal">展示公交线路图</button>

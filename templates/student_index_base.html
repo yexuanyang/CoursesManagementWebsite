@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="../static/css/bootstrap.css">
     <link rel="stylesheet" href="../static/css/qustmap.css">
     <link rel="stylesheet" href="/static/layui/css/layui.css">
+    <link rel="stylesheet" href="/static/assets/css/one_to_one.css">
     <script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=wEduqRmZfekzM6qpc3HZxYgMRqLue3P6"></script>
     <script src="https://mapv.baidu.com/build/mapv.min.js"></script>
 
@@ -34,9 +35,13 @@
         </a>
     </div>
     <div class="am-icon-list tpl-header-nav-hover-ico am-fl am-margin-right">
-
     </div>
-
+    <div id="time_show">
+    <p class="yes"><span id="hour">{{ time_que[0] }}</span> : <span id="min">{{ time_que[1] }}</span> : <span id="second">{{ time_que[2] }}</span></p>
+    <button id="act" class="layui-btn">开始</button>
+    <button id="quicker" class="layui-btn layui-btn-normal">加速</button>
+    <button id="pause" class="layui-btn layui-btn-warm">暂停</button>
+    </div>
 
     <div class="am-collapse am-topbar-collapse" id="topbar-collapse">
 
@@ -91,6 +96,7 @@
 <script src="/static/assets/js/app.js"></script>
 <script src="/static/js/delete.js"></script>
 <script src="/static/layui/layui.js"></script>
+<script src="/static/assets/js/time.js"></script>
 {% block otherscripts %}{% endblock %}
 </body>
 

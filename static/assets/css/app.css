@@ -1968,3 +1968,26 @@ ul.tpl-dropdown-content li>a.tpl-dropdown-content-message:last-child {
         padding-left: 0;
     }
 }
+#time_show{
+    position: absolute;
+    right:20px;
+    top: 0px;
+    display: flex;
+    width: auto;
+    align-items: center;
+    justify-content: center;
+}
+#quicker{
+    display: inline-block;
+}
+#act{
+    display: inline-block;
+    margin-left: 30px;
+}
+#pause{
+    display: inline-block;
+}
+.yes{
+    color: #0b2e13;
+    font-size: 20px;
+}

@@ -192,26 +192,30 @@ def forget():
 # 学生课程信息管理首页
 @app.route('/index/admin')
 def admin_index():
-    return render_template('admin_new.html', cla1='active')
+    global time_list
+    return render_template('admin_new.html', cla1='active',time_que=time_list)
 
 
 @app.route('/index/student')
 def student_index():
-    return render_template('student_index.html', cla1='active')
+    global time_list
+    return render_template('student_index.html', cla1='active',time_que=time_list)
 
 
 @app.route('/in_course/student', methods=['POST', 'GET'])
 def in_course_fun_stu():
+    global time_list
     g.uname = session.get('now_user')
     in_course.send()
-    return render_template('student_course.html', cla2='active', posts=courses)
+    return render_template('student_course.html', cla2='active', posts=courses,time_que=time_list)
 
 
 @app.route('/in_course/admin', methods=['POST', 'GET'])
 def in_course_fun():
+    global time_list
     g.uname = session.get('now_user')
     in_course.send()
-    return render_template('student_course_admin.html', cla2='active', posts=courses)
+    return render_template('student_course_admin.html', cla2='active', posts=courses,time_que=time_list)
 
 
 @app.route('/in_course/admin/add', methods=['POST', 'GET'])
@@ -256,6 +260,7 @@ def in_course_delete_fun():
 
 @app.route('/in_course/admin/change', methods=['POST', 'GET'])
 def in_course_change_fun():
+    global time_list
     id1 = request.args.get('id1')
     cause_name = request.args.get('cause_name')
     teacher = request.args.get('teacher')
@@ -292,18 +297,20 @@ def in_course_change_fun():
 
         return redirect('/in_course/admin')
     return render_template('change_course.html', cause_name=cause_name, teacher=teacher, time=time,
-                           location=location, qq=qq, exam_time=exam_time)
+                           location=location, qq=qq)
 
 
 @app.route('/out_course/admin', methods=['POST', 'GET'])
 def out_course_fun():
+    global time_list
     g.uname = session.get('now_user')
     out_activity.send()
-    return render_template('student_out_course_admin.html', cla3='activate', posts=out_courses)
+    return render_template('student_out_course_admin.html', cla3='activate', posts=out_courses,time_que=time_list)
 
 
 @app.route('/out_course/admin/add', methods=['POST', 'GET'])
 def out_course_add_fun():
+    global time_list
     print(request.method)
     if request.method == 'POST':
         g.uname = session.get('now_user')
@@ -322,11 +329,12 @@ def out_course_add_fun():
         with open('./static/data/out_course.json', "w", encoding='utf-8') as fp:
             json.dump(out_courses, fp, ensure_ascii=False, separators=('\n,', ':'))
         return redirect('/out_course/admin')
-    return render_template('add_out_course.html', cla3='active', posts=out_courses)
+    return render_template('add_out_course.html', cla3='active', posts=out_courses,time_que=time_list)
 
 
 @app.route('/out_course/admin/delete', methods=['POST', 'GET'])
 def out_course_del_fun():
+    global time_list
     g.uname = session.get('now_user')
     out_activity.send()
     delete_list = request.form.getlist('checklist')
@@ -384,13 +392,15 @@ def out_course_change_fun():
 
 @app.route('/out_course/student', methods=['POST', 'GET'])
 def out_course_fun_stu():
+    global time_list
     g.uname = session.get('now_user')
     out_activity.send()
-    return render_template('student_out_course.html', cla3='active', posts=out_courses)
+    return render_template('student_out_course.html', cla3='active', posts=out_courses,time_que=time_list)
 
 
 @app.route('/out_course/student/add', methods=['POST', 'GET'])
 def out_course_add_fun_stu():
+    global time_list
     if request.method == 'POST':
         g.uname = session.get('now_user')
         out_activity_set.send()
@@ -407,7 +417,7 @@ def out_course_add_fun_stu():
         with open('./static/data/out_course.json', "w", encoding='utf-8') as fp:
             json.dump(out_courses, fp, ensure_ascii=False, separators=('\n,', ':'))
         return redirect('/out_course/student')
-    return render_template('add_out_course.html', cla3='activate', posts=out_courses)
+    return render_template('add_out_course.html', cla3='activate', posts=out_courses,time_que=time_list)
 
 
 @app.route('/out_course/student/delete', methods=['POST', 'GET'])
@@ -428,6 +438,7 @@ def out_course_del_fun_stu():
 
 @app.route('/out_course/student/change', methods=['POST', 'GET'])
 def out_course_change_fun_stu():
+    global time_list
     id1 = request.args.get('id1')
     activity_name = request.args.get('activity_name')
     activity_time = request.args.get('activity_time')
@@ -468,45 +479,54 @@ def out_course_change_fun_stu():
 
 @app.route('/route/admin', methods=['POST', 'GET'])
 def route():
+    global time_list
     g.uname = session.get('now_user')
     str_all = ["/static/js/qustmap_shahe.js", "/static/js/qustmap_headquarter.js"]
     str_choose = "/static/js/qustmap_shahe.js"
     template_chose="qustmap_admin.html"
     route_in.send()
-    global time_list
     if request.method == 'POST':  # 此时如果是提交
         way = request.form.get('way')
         if way == '010':  # 此时是沙河
             template_chose = "qustmap_admin.html"
             str_choose = str_all[0]
-            print(str_choose)
         elif way == '001':  # 此时为本部
             template_chose = "qustmap_admin.html"
             str_choose = str_all[1]
         elif way=='100':#此时是两地跨越
             template_chose="one_to_one_admin.html"
     if(template_chose=="qustmap_admin.html"):
-        return render_template(template_chose, ways=str_choose, cla4="active", usn="admin")
+        return render_template(template_chose, ways=str_choose, cla4="active", usn="admin",time_que=time_list)
     else:
-        return render_template(template_chose,cla4="active",usn="admin",hour=time_list[0],minute=time_list[1],second=time_list[2])
+        return render_template(template_chose,cla4="active",usn="admin",time_que=time_list)
 
 @app.route('/route/student', methods=['POST', 'GET'])
 def route_stu():
+    global time_list
     g.uname = session.get('now_user')
     str_all = ["/static/js/qustmap_shahe.js", "/static/js/qustmap_headquarter.js"]
     str_choose = "/static/js/qustmap_shahe.js"
+    template_chose="qustmap_student.html"
     route_in.send()
     if request.method == 'POST':  # 此时如果是提交
         way = request.form.get('way')
         if way == '010':  # 此时是沙河
+            template_chose = "qustmap_student.html"
             str_choose = str_all[0]
         elif way == '001':  # 此时为本部
+            template_chose = "qustmap_student.html"
             str_choose = str_all[1]
-    return render_template('qustmap_student.html', ways=str_choose, cla4="active", usn="student")
+        elif way=='100': #此时为两地的跨越
+            template_chose="one_to_one_admin.html"
+    if(template_chose == "qustmap_student.html"):
+        return render_template(template_chose, ways=str_choose, cla4="active", usn="student",time_que=time_list)
+    else:
+        return render_template(template_chose, cla4="active", usn="student", time_que=time_list)
 
 
 @app.route('/logging/admin', methods=['POST', 'GET'])
 def logging_fun():
+    global time_list
     g.uname = session.get('now_user')
     if request.method == 'POST':
         with open('logging.log', 'r+', encoding='utf-8') as f:
@@ -523,7 +543,7 @@ def logging_fun():
             contents.split('\n')
             a = contents.split('\n')
             a.reverse()
-        return render_template('admin_new.html', posts=a)
+        return render_template('admin_new.html', posts=a,time_que=time_list)
 
 
 @app.route('/course_inf', methods=['POST', 'GET'])
@@ -534,6 +554,8 @@ def show():
 def time_control():
     time=request.form.get('time')
     global  time_list
+    if(time_list==[]):
+        time_list=[10,0,0]
     time_list=json.loads(time) #得到了时间列表
     return "time_yes"
 

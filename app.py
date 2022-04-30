@@ -3,6 +3,7 @@ import setting
 import json
 from signals import logging_in, login_space, in_course, route_in, out_activity, in_course_add, in_course_delete, \
     in_course_change, out_activity_set
+from forms import OutCourseForms
 
 app = Flask(__name__)
 
@@ -355,7 +356,7 @@ def out_course_change_fun():
     activity_name = request.args.get('activity_name')
     activity_time = request.args.get('activity_time')
     begin_time = request.args.get('begin_time')
-    last = request.args.get('last')
+    end_time = request.args.get('end_time')
     persons_num = request.args.get('persons_num')
     location = request.args.get('location')
 
@@ -372,11 +373,11 @@ def out_course_change_fun():
         activity_name = request.form.get('activity_name')
         activity_time = request.form.get('activity_time')
         begin_time = request.form.get('begin_time')
-        last = request.form.get('last')
+        end_time = request.form.get('end_time')
         persons_num = request.form.get('persons_num')
         location = request.form.get('location')
         new_out_course = {'activity_name': activity_name, 'activity_time': activity_time, 'begin_time': begin_time,
-                          'last': last,
+                          'end_time': end_time,
                           'persons_num': persons_num, 'location': location}
         out_courses.insert(int(id2) - 1, new_out_course)
 
@@ -386,7 +387,7 @@ def out_course_change_fun():
 
     return render_template('change_out_course.html', activity_name=activity_name, activity_time=activity_time,
                            begin_time=begin_time,
-                           last=last,
+                           end_time=end_time,
                            persons_num=persons_num, location=location)
 
 
@@ -400,6 +401,8 @@ def out_course_fun_stu():
 
 @app.route('/out_course/student/add', methods=['POST', 'GET'])
 def out_course_add_fun_stu():
+    form = OutCourseForms()
+
     global time_list
     if request.method == 'POST':
         g.uname = session.get('now_user')
@@ -407,17 +410,17 @@ def out_course_add_fun_stu():
         activity_name = request.form.get('activity_name')
         activity_time = request.form.get('activity_time')
         begin_time = request.form.get('begin_time')
-        last = request.form.get('last')
+        end_time = request.form.get('end_time')
         persons_num = request.form.get('persons_num')
         location = request.form.get('location')
         new_out_course = {'activity_name': activity_name, 'activity_time': activity_time, 'begin_time': begin_time,
-                          'last': last,
+                          'end_time': end_time,
                           'persons_num': persons_num, 'location': location}
         out_courses.append(new_out_course)
         with open('./static/data/out_course.json', "w", encoding='utf-8') as fp:
             json.dump(out_courses, fp, ensure_ascii=False, separators=('\n,', ':'))
         return redirect('/out_course/student')
-    return render_template('add_out_course.html', cla3='activate', posts=out_courses,time_que=time_list)
+    return render_template('add_out_course.html', cla3='activate', posts=out_courses,time_que=time_list,form=form)
 
 
 @app.route('/out_course/student/delete', methods=['POST', 'GET'])

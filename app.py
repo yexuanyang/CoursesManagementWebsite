@@ -3,7 +3,7 @@ import setting
 import json
 from signals import logging_in, login_space, in_course, route_in, out_activity, in_course_add, in_course_delete, \
     in_course_change, out_activity_set
-from forms import OutCourseForms
+from forms import OutCourseForms, InCourseForms
 
 app = Flask(__name__)
 
@@ -221,25 +221,27 @@ def in_course_fun():
 
 @app.route('/in_course/admin/add', methods=['POST', 'GET'])
 def in_course_add_func():
+    form = InCourseForms()
     print(request.method)
     if request.method == 'POST':
         g.uname = session.get('now_user')
         in_course_add.send()
-        course_name = request.form.get('course_name')
+        cause_name = request.form.get('cause_name')
         teacher = request.form.get('teacher')
-        class_time = request.form.get('class_time')
-        class_location = request.form.get('class_location')
-        telephone = request.form.get('telephone')
+        time = request.form.get('time')
+        day = request.form.get('day')
+        location = request.form.get('location')
+        qq = request.form.get('qq')
         exam_time = request.form.get('exam_time')
-        newcourse = {"cause_name": course_name, "teacher": teacher, "time": class_time, "location": class_location,
-                     "qq": telephone, "exam_time": exam_time}
+        newcourse = {"cause_name": cause_name, "teacher": teacher, "time": day+time, "location": location,
+                     "qq": qq, "exam_time": exam_time}
         print(newcourse)
         courses.append(newcourse)
         with open('./static/data/course.json', 'w', encoding='utf-8') as fp:
             json.dump(courses, fp, ensure_ascii=False, separators=('\n,', ':'))
         return redirect('/in_course/admin')
 
-    return render_template('add_course.html')
+    return render_template('add_course.html',form=form)
 
 
 @app.route('/in_course/admin/delete', methods=['POST', 'GET'])
@@ -282,14 +284,14 @@ def in_course_change_fun():
     if request.method == 'POST':
         g.uname = session.get('now_user')
         in_course_change.send()
-        course_name = request.form.get('course_name')
+        course_name = request.form.get('cause_name')
         teacher = request.form.get('teacher')
-        class_time = request.form.get('class_time')
-        class_location = request.form.get('class_location')
-        telephone = request.form.get('telephone')
+        time = request.form.get('time')
+        location = request.form.get('location')
+        qq = request.form.get('qq')
         exam_time = request.form.get('exam_time')
-        newcourse = {"cause_name": course_name, "teacher": teacher, "time": class_time, "location": class_location,
-                     "qq": telephone, "exam_time": exam_time}
+        newcourse = {"cause_name": course_name, "teacher": teacher, "time": time, "location": location,
+                     "qq": qq, "exam_time": exam_time}
         print(newcourse)
         courses.insert(int(id1) - 1, newcourse)
 
@@ -311,6 +313,8 @@ def out_course_fun():
 
 @app.route('/out_course/admin/add', methods=['POST', 'GET'])
 def out_course_add_fun():
+
+    form = OutCourseForms()
     global time_list
     print(request.method)
     if request.method == 'POST':
@@ -330,7 +334,7 @@ def out_course_add_fun():
         with open('./static/data/out_course.json', "w", encoding='utf-8') as fp:
             json.dump(out_courses, fp, ensure_ascii=False, separators=('\n,', ':'))
         return redirect('/out_course/admin')
-    return render_template('add_out_course.html', cla3='active', posts=out_courses,time_que=time_list)
+    return render_template('add_out_course.html', cla3='active', posts=out_courses,time_que=time_list, form=form)
 
 
 @app.route('/out_course/admin/delete', methods=['POST', 'GET'])

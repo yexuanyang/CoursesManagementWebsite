@@ -22,7 +22,8 @@ out_courses = json.load(out_course_filePtr)
 print(admins)
 print(student)
 print(out_courses)
-time_list=[10,0,0]
+time_list = [10, 0, 0]
+
 
 @app.route('/')
 def index():
@@ -194,13 +195,13 @@ def forget():
 @app.route('/index/admin')
 def admin_index():
     global time_list
-    return render_template('admin_new.html', cla1='active',time_que=time_list)
+    return render_template('admin_new.html', cla1='active', time_que=time_list)
 
 
 @app.route('/index/student')
 def student_index():
     global time_list
-    return render_template('student_index.html', cla1='active',time_que=time_list)
+    return render_template('student_index.html', cla1='active', time_que=time_list)
 
 
 @app.route('/in_course/student', methods=['POST', 'GET'])
@@ -208,7 +209,7 @@ def in_course_fun_stu():
     global time_list
     g.uname = session.get('now_user')
     in_course.send()
-    return render_template('student_course.html', cla2='active', posts=courses,time_que=time_list)
+    return render_template('student_course.html', cla2='active', posts=courses, time_que=time_list)
 
 
 @app.route('/in_course/admin', methods=['POST', 'GET'])
@@ -216,13 +217,13 @@ def in_course_fun():
     global time_list
     g.uname = session.get('now_user')
     in_course.send()
-    return render_template('student_course_admin.html', cla2='active', posts=courses,time_que=time_list)
+    return render_template('student_course_admin.html', cla2='active', posts=courses, time_que=time_list)
 
 
 @app.route('/in_course/admin/add', methods=['POST', 'GET'])
 def in_course_add_func():
     form = InCourseForms()
-    print(request.method)
+
     if request.method == 'POST':
         g.uname = session.get('now_user')
         in_course_add.send()
@@ -231,17 +232,21 @@ def in_course_add_func():
         time = request.form.get('time')
         day = request.form.get('day')
         location = request.form.get('location')
+        class_num = request.form.get('class_num')
         qq = request.form.get('qq')
-        exam_time = request.form.get('exam_time')
-        newcourse = {"cause_name": cause_name, "teacher": teacher, "time": day+time, "location": location,
-                     "qq": qq, "exam_time": exam_time}
-        print(newcourse)
+        exam_time = request.form.get('exam_time').replace("T", " ")
+        end_time = request.form.get('end_time').replace("T", " ")
+
+        newcourse = {"cause_name": cause_name, "teacher": teacher, "time": day + time,
+                     "location": location + ' ' + class_num,
+                     "qq": qq, "exam_time": exam_time + '~~' + end_time}
+
         courses.append(newcourse)
         with open('./static/data/course.json', 'w', encoding='utf-8') as fp:
             json.dump(courses, fp, ensure_ascii=False, separators=('\n,', ':'))
         return redirect('/in_course/admin')
 
-    return render_template('add_course.html',form=form)
+    return render_template('add_course.html', form=form)
 
 
 @app.route('/in_course/admin/delete', methods=['POST', 'GET'])
@@ -249,8 +254,7 @@ def in_course_delete_fun():
     g.uname = session.get('now_user')
     in_course_delete.send()
     delete_index = request.form.getlist('checklist')
-    print(delete_index)
-    print(request.method)
+
     for i in delete_index:
         if int(i) - 1 == len(courses):
             courses.pop(-1)
@@ -264,6 +268,7 @@ def in_course_delete_fun():
 @app.route('/in_course/admin/change', methods=['POST', 'GET'])
 def in_course_change_fun():
     global time_list
+    form = InCourseForms()
     id1 = request.args.get('id1')
     cause_name = request.args.get('cause_name')
     teacher = request.args.get('teacher')
@@ -271,9 +276,6 @@ def in_course_change_fun():
     location = request.args.get('location')
     qq = request.args.get('qq')
     exam_time = request.args.get('exam_time')
-    print(id1)
-    print(int(id1))
-    print(len(courses))
 
     if request.method == 'GET':
         if len(courses) == int(id1) - 1:
@@ -287,20 +289,24 @@ def in_course_change_fun():
         course_name = request.form.get('cause_name')
         teacher = request.form.get('teacher')
         time = request.form.get('time')
+        day = request.form.get('day')
         location = request.form.get('location')
+        class_num = request.form.get('class_num')
         qq = request.form.get('qq')
-        exam_time = request.form.get('exam_time')
-        newcourse = {"cause_name": course_name, "teacher": teacher, "time": time, "location": location,
-                     "qq": qq, "exam_time": exam_time}
-        print(newcourse)
+        exam_time = request.form.get('exam_time').replace('T', ' ')
+        end_time = request.form.get('end_time').replace('T', ' ')
+        newcourse = {"cause_name": course_name, "teacher": teacher, "time": day + time,
+                     "location": location + ' ' + class_num,
+                     "qq": qq, "exam_time": exam_time + "~~" + end_time}
+
         courses.insert(int(id1) - 1, newcourse)
 
         with open('./static/data/course.json', 'w', encoding='utf-8') as fp:
             json.dump(courses, fp, ensure_ascii=False, separators=('\n,', ':'))
 
         return redirect('/in_course/admin')
-    return render_template('change_course.html', cause_name=cause_name, teacher=teacher, time=time,
-                           location=location, qq=qq)
+    return render_template('change_course.html', form=form, time=time, location=location, exam_time=exam_time,
+                           cause_name=cause_name, qq=qq, teacher=teacher)
 
 
 @app.route('/out_course/admin', methods=['POST', 'GET'])
@@ -308,33 +314,32 @@ def out_course_fun():
     global time_list
     g.uname = session.get('now_user')
     out_activity.send()
-    return render_template('student_out_course_admin.html', cla3='activate', posts=out_courses,time_que=time_list)
+    return render_template('student_out_course_admin.html', cla3='active', posts=out_courses, time_que=time_list)
 
 
 @app.route('/out_course/admin/add', methods=['POST', 'GET'])
 def out_course_add_fun():
-
     form = OutCourseForms()
     global time_list
-    print(request.method)
+
     if request.method == 'POST':
         g.uname = session.get('now_user')
         out_activity_set.send()
         activity_name = request.form.get('activity_name')
         activity_time = request.form.get('activity_time')
         begin_time = request.form.get('begin_time')
-        last = request.form.get('last')
+        end_time = request.form.get('end_time')
         persons_num = request.form.get('persons_num')
         location = request.form.get('location')
         new_out_course = {'activity_name': activity_name, 'activity_time': activity_time, 'begin_time': begin_time,
-                          'last': last,
+                          'end_time': end_time,
                           'persons_num': persons_num, 'location': location}
         out_courses.append(new_out_course)
-        print(out_courses)
+
         with open('./static/data/out_course.json', "w", encoding='utf-8') as fp:
             json.dump(out_courses, fp, ensure_ascii=False, separators=('\n,', ':'))
         return redirect('/out_course/admin')
-    return render_template('add_out_course.html', cla3='active', posts=out_courses,time_que=time_list, form=form)
+    return render_template('add_out_course.html', cla3='active', posts=out_courses, time_que=time_list, form=form)
 
 
 @app.route('/out_course/admin/delete', methods=['POST', 'GET'])
@@ -356,6 +361,8 @@ def out_course_del_fun():
 
 @app.route('/out_course/admin/change', methods=['POST', 'GET'])
 def out_course_change_fun():
+
+    form = OutCourseForms()
     id2 = request.args.get('id2')
     activity_name = request.args.get('activity_name')
     activity_time = request.args.get('activity_time')
@@ -392,7 +399,7 @@ def out_course_change_fun():
     return render_template('change_out_course.html', activity_name=activity_name, activity_time=activity_time,
                            begin_time=begin_time,
                            end_time=end_time,
-                           persons_num=persons_num, location=location)
+                           persons_num=persons_num, location=location,form=form)
 
 
 @app.route('/out_course/student', methods=['POST', 'GET'])
@@ -400,7 +407,7 @@ def out_course_fun_stu():
     global time_list
     g.uname = session.get('now_user')
     out_activity.send()
-    return render_template('student_out_course.html', cla3='active', posts=out_courses,time_que=time_list)
+    return render_template('student_out_course.html', cla3='active', posts=out_courses, time_que=time_list)
 
 
 @app.route('/out_course/student/add', methods=['POST', 'GET'])
@@ -424,7 +431,7 @@ def out_course_add_fun_stu():
         with open('./static/data/out_course.json', "w", encoding='utf-8') as fp:
             json.dump(out_courses, fp, ensure_ascii=False, separators=('\n,', ':'))
         return redirect('/out_course/student')
-    return render_template('add_out_course.html', cla3='activate', posts=out_courses,time_que=time_list,form=form)
+    return render_template('add_out_course.html', cla3='activate', posts=out_courses, time_que=time_list, form=form)
 
 
 @app.route('/out_course/student/delete', methods=['POST', 'GET'])
@@ -446,11 +453,12 @@ def out_course_del_fun_stu():
 @app.route('/out_course/student/change', methods=['POST', 'GET'])
 def out_course_change_fun_stu():
     global time_list
+    form = OutCourseForms()
     id1 = request.args.get('id1')
     activity_name = request.args.get('activity_name')
     activity_time = request.args.get('activity_time')
     begin_time = request.args.get('begin_time')
-    last = request.args.get('last')
+    end_time = request.args.get('end_time')
     persons_num = request.args.get('persons_num')
     location = request.args.get('location')
 
@@ -466,11 +474,11 @@ def out_course_change_fun_stu():
         activity_name = request.form.get('activity_name')
         activity_time = request.form.get('activity_time')
         begin_time = request.form.get('begin_time')
-        last = request.form.get('last')
+        end_time = request.form.get('end_time')
         persons_num = request.form.get('persons_num')
         location = request.form.get('location')
         new_out_course = {'activity_name': activity_name, 'activity_time': activity_time, 'begin_time': begin_time,
-                          'last': last,
+                          'end_time': end_time,
                           'persons_num': persons_num, 'location': location}
         out_courses.insert(int(id1) - 1, new_out_course)
 
@@ -480,8 +488,8 @@ def out_course_change_fun_stu():
 
     return render_template('change_out_course.html', activity_name=activity_name, activity_time=activity_time,
                            begin_time=begin_time,
-                           last=last,
-                           persons_num=persons_num, location=location)
+                           end_time=end_time,
+                           persons_num=persons_num, location=location,form=form)
 
 
 @app.route('/route/admin', methods=['POST', 'GET'])
@@ -490,7 +498,7 @@ def route():
     g.uname = session.get('now_user')
     str_all = ["/static/js/qustmap_shahe.js", "/static/js/qustmap_headquarter.js"]
     str_choose = "/static/js/qustmap_shahe.js"
-    template_chose="qustmap_admin.html"
+    template_chose = "qustmap_admin.html"
     route_in.send()
     if request.method == 'POST':  # 此时如果是提交
         way = request.form.get('way')
@@ -500,12 +508,13 @@ def route():
         elif way == '001':  # 此时为本部
             template_chose = "qustmap_admin.html"
             str_choose = str_all[1]
-        elif way=='100':#此时是两地跨越
-            template_chose="one_to_one_admin.html"
-    if(template_chose=="qustmap_admin.html"):
-        return render_template(template_chose, ways=str_choose, cla4="active", usn="admin",time_que=time_list)
+        elif way == '100':  # 此时是两地跨越
+            template_chose = "one_to_one_admin.html"
+    if (template_chose == "qustmap_admin.html"):
+        return render_template(template_chose, ways=str_choose, cla4="active", usn="admin", time_que=time_list)
     else:
-        return render_template(template_chose,cla4="active",usn="admin",time_que=time_list)
+        return render_template(template_chose, cla4="active", usn="admin", time_que=time_list)
+
 
 @app.route('/route/student', methods=['POST', 'GET'])
 def route_stu():
@@ -513,7 +522,7 @@ def route_stu():
     g.uname = session.get('now_user')
     str_all = ["/static/js/qustmap_shahe.js", "/static/js/qustmap_headquarter.js"]
     str_choose = "/static/js/qustmap_shahe.js"
-    template_chose="qustmap_student.html"
+    template_chose = "qustmap_student.html"
     route_in.send()
     if request.method == 'POST':  # 此时如果是提交
         way = request.form.get('way')
@@ -523,10 +532,10 @@ def route_stu():
         elif way == '001':  # 此时为本部
             template_chose = "qustmap_student.html"
             str_choose = str_all[1]
-        elif way=='100': #此时为两地的跨越
-            template_chose="one_to_one_admin.html"
-    if(template_chose == "qustmap_student.html"):
-        return render_template(template_chose, ways=str_choose, cla4="active", usn="student",time_que=time_list)
+        elif way == '100':  # 此时为两地的跨越
+            template_chose = "one_to_one_admin.html"
+    if template_chose == "qustmap_student.html":
+        return render_template(template_chose, ways=str_choose, cla4="active", usn="student", time_que=time_list)
     else:
         return render_template(template_chose, cla4="active", usn="student", time_que=time_list)
 
@@ -550,21 +559,23 @@ def logging_fun():
             contents.split('\n')
             a = contents.split('\n')
             a.reverse()
-        return render_template('admin_new.html', posts=a,time_que=time_list)
+        return render_template('admin_new.html', posts=a, time_que=time_list)
 
 
 @app.route('/course_inf', methods=['POST', 'GET'])
 def show():
     return
 
-@app.route('/time_control',methods=['POST']) #用于控制时间 ，所有的时间系统都采用当前的操作
+
+@app.route('/time_control', methods=['POST'])  # 用于控制时间 ，所有的时间系统都采用当前的操作
 def time_control():
-    time=request.form.get('time')
-    global  time_list
-    if(time_list==[]):
-        time_list=[10,0,0]
-    time_list=json.loads(time) #得到了时间列表
+    time = request.form.get('time')
+    global time_list
+    if (time_list == []):
+        time_list = [10, 0, 0]
+    time_list = json.loads(time)  # 得到了时间列表
     return "time_yes"
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=2000)

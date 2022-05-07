@@ -27,7 +27,7 @@
     <span class="input-group-text" id="basic-addon1" >{{form.location.label}}</span>
 {#    <input type="text" class="form-control" placeholder="请输入上课地点" aria-label="Username"#}
 {#           aria-describedby="basic-addon1" name="class_location">#}
-    {{ form.location }}
+    {{ form.location }}{{ form.class_num }}
 </div><div class="input-group mb-3">
     <span class="input-group-text" id="basic-addon1" >{{ form.qq.label }}</span>
 {#    <input type="text" class="form-control" placeholder="请输入教师联系方式" aria-label="Username"#}
@@ -37,7 +37,7 @@
     <span class="input-group-text" id="basic-addon1" >{{ form.exam_time.label }}</span>
 {#    <input type="text" class="form-control" placeholder="请输入考试时间" aria-label="Username"#}
 {#           aria-describedby="basic-addon1" name="exam_time">#}
-    {{ form.exam_time }}
+    {{ form.exam_time }}~~{{ form.end_time }}
 </div>
     <div>
 {#        <input class="input-group-text" style="margin-left: 40%" type="submit" value="确定">#}

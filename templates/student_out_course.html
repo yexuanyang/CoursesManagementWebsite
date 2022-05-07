@@ -53,7 +53,7 @@
                                         <td>{{ post.end_time }}</td>
                                         <td>{{ post.persons_num }}</td>
                                         <td>{{ post.location }}</td>
-                                        <td><a href="/out_course/student/change?id1={{ loop.index }}&activity_name={{ post.activity_name }}&activity_time={{ post.activity_time }}&begin_time={{ post.begin_time }}&last={{ post.end_time }}&persons_num={{ post.persons_num }}&location={{ post.location }}">更新
+                                        <td><a href="/out_course/student/change?id1={{ loop.index }}&activity_name={{ post.activity_name }}&activity_time={{ post.activity_time }}&begin_time={{ post.begin_time }}&end_time={{ post.end_time }}&persons_num={{ post.persons_num }}&location={{ post.location }}">更新
                                             </a></td>
                                     </tr>
                                 {% endfor %}

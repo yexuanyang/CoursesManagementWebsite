@@ -566,7 +566,19 @@ def logging_fun():
 def show():
     return
 
-
+@app.route('/direct_course/<course>/')
+def direct_course(course):
+    flag=0
+    post=None
+    print(courses)
+    for a in courses:
+        if a.get("cause_name")==course:
+            flag=1
+            post=a
+    if flag==0:
+        return render_template("NotFound.html")
+    else:
+        return render_template("causes_page.html",post=post)
 @app.route('/time_control', methods=['POST'])  # 用于控制时间 ，所有的时间系统都采用当前的操作
 def time_control():
     time = request.form.get('time')

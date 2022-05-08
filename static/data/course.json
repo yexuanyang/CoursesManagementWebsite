@@ -1,18 +1,18 @@
 [{"cause_name":"计算机组成原理"
-,"teacher":"周锋"
-,"time":"星期一 第6、7、8节"
-,"location":"沙河教学楼1 S103"
-,"qq":"789156489"
-,"exam_time":"6月23日 14：00-16：00"}
-,{"cause_name":"形式语言与自动机"
-,"teacher":"左兴权"
-,"time":"星期一 第1、2节"
-,"location":"沙河教学楼2 N301"
-,"qq":"915278157"
-,"exam_time":"6月26日 8：00-10：00"}
-,{"cause_name":"xxxx"
-,"teacher":"xxx"
-,"time":"星期一1，2节课"
+,"teacher":"周峰"
+,"time":"星期一09:50~11:25"
 ,"location":"沙河教学楼1 N101"
-,"qq":"asdafawa"
-,"exam_time":"2022-05-13 11:16~~2022-05-14 11:16"}]
+,"qq":"789156489"
+,"exam_time":"2022-06-23 14:00~~2022-06-23 16:00"}
+,{"cause_name":"xxxx"
+,"teacher":"xxxx"
+,"time":"星期一08:00~09:35"
+,"location":"沙河教学楼1 N101"
+,"qq":"asdfagawa"
+,"exam_time":"2022-05-08 17:01~~2022-05-08 21:01"}
+,{"cause_name":"xxx"
+,"teacher":"xxx"
+,"time":"星期一08:00~14:35"
+,"location":"沙河教学楼1 N101"
+,"qq":"xxxadasd"
+,"exam_time":"2022-05-08 16:30~~2022-05-08 20:30"}]

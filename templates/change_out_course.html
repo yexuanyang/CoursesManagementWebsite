@@ -7,44 +7,57 @@
 </head>
 <body>
 <form action="" style="width: 500px;margin:200px auto" method="post">
-<div class="input-group mb-3">
-    <span class="input-group-text" id="basic-addon1" >{{form.activity_name.label}}</span>
-{#    <input type="text" class="form-control" placeholder="请输入活动名称" aria-label="Username"#}
-{#           aria-describedby="basic-addon1" name="activity_name" value="{{ activity_name }}">#}
-    {{ form.activity_name }}    原数据:{{ activity_name }}
-</div>
-<div class="input-group mb-3">
-    <span class="input-group-text" id="basic-addon1" >{{form.activity_time.label}}</span>
-{#    <input type="text" class="form-control" placeholder="请输入活动日期" aria-label="Username"#}
-{#           aria-describedby="basic-addon1" name="activity_time" value="{{ activity_time }}">#}
-    {{ form.activity_time }}    原数据:{{ activity_time }}
-</div><div class="input-group mb-3">
-    <span class="input-group-text" id="basic-addon1" >{{form.begin_time.label}}</span>
-{#    <input type="text" class="form-control" placeholder="请输入开始时间" aria-label="Username"#}
-{#           aria-describedby="basic-addon1" name="begin_time" value="{{ begin_time }}">#}
-    {{ form.begin_time }}   原数据:{{ begin_time }}
-</div><div class="input-group mb-3">
-    <span class="input-group-text" id="basic-addon1" >{{form.end_time.label}}</span>
-{#    <input type="text" class="form-control" placeholder="请输入结束时间" aria-label="Username"#}
-{#           aria-describedby="basic-addon1" name="end_time" value="{{ end_time }}">#}
-    {{ form.end_time }}     原数据:{{ end_time }}
-</div><div class="input-group mb-3">
-    <span class="input-group-text" id="basic-addon1" >{{form.persons_num.label}}</span>
-{#    <input type="text" class="form-control" placeholder="请输入活动人数" aria-label="Username"#}
-{#           aria-describedby="basic-addon1" name="persons_num" value="{{ persons_num }}">#}
-    {{ form.persons_num }}      原数据:{{ persons_num }}
-</div><div class="input-group mb-3">
-    <span class="input-group-text" id="basic-addon1" >{{form.location.label}}</span>
-{#    <input type="text" class="form-control" placeholder="请输入活动地点" aria-label="Username"#}
-{#           aria-describedby="basic-addon1" name="location" value="{{ location }}">#}
-    {{ form.location }}     原数据:{{ location }}
-</div>
+    <div class="input-group mb-3">
+        <span class="input-group-text" id="basic-addon1">{{ form.activity_name.label }}</span>
+        {#    <input type="text" class="form-control" placeholder="请输入活动名称" aria-label="Username"#}
+        {#           aria-describedby="basic-addon1" name="activity_name" value="{{ activity_name }}">#}
+        {{ form.activity_name }} 原数据:{{ activity_name }}
+    </div>
+    <div class="input-group mb-3">
+        <span class="input-group-text" id="basic-addon1">{{ form.activity_time.label }}</span>
+        {#    <input type="text" class="form-control" placeholder="请输入活动日期" aria-label="Username"#}
+        {#           aria-describedby="basic-addon1" name="activity_time" value="{{ activity_time }}">#}
+        {{ form.activity_time }} 原数据:{{ activity_time }}
+    </div>
+    <div class="input-group mb-3">
+        <span class="input-group-text" id="basic-addon1">{{ form.begin_time.label }}</span>
+        {#    <input type="text" class="form-control" placeholder="请输入开始时间" aria-label="Username"#}
+        {#           aria-describedby="basic-addon1" name="begin_time" value="{{ begin_time }}">#}
+        {{ form.begin_time }} 原数据:{{ begin_time }}
+    </div>
+    <div class="input-group mb-3">
+        <span class="input-group-text" id="basic-addon1">{{ form.end_time.label }}</span>
+        {#    <input type="text" class="form-control" placeholder="请输入结束时间" aria-label="Username"#}
+        {#           aria-describedby="basic-addon1" name="end_time" value="{{ end_time }}">#}
+        {{ form.end_time }} 原数据:{{ end_time }}
+    </div>
+    <div class="input-group mb-3">
+        <span class="input-group-text" id="basic-addon1">{{ form.persons_num.label }}</span>
+        {#    <input type="text" class="form-control" placeholder="请输入活动人数" aria-label="Username"#}
+        {#           aria-describedby="basic-addon1" name="persons_num" value="{{ persons_num }}">#}
+        {{ form.persons_num }} 原数据:{{ persons_num }}
+    </div>
+    <div class="input-group mb-3">
+        <span class="input-group-text" id="basic-addon1">{{ form.location.label }}</span>
+        {#    <input type="text" class="form-control" placeholder="请输入活动地点" aria-label="Username"#}
+        {#           aria-describedby="basic-addon1" name="location" value="{{ location }}">#}
+        {{ form.location }} 原数据:{{ location }}
+    </div>
     <div>
-{#        <input class="input-group-text" style="margin-left: 40%" type="submit" value="确定">#}
+        {#        <input class="input-group-text" style="margin-left: 40%" type="submit" value="确定">#}
         {{ form.submit }}
     </div>
 
 </form>
-
+{% if conflict %}
+    <script>
+        window.alert("此活动和其他活动有时间冲突\n冲突活动时间:\n{{ conflict_activity['activity_time'] }} 开始于{{ conflict_activity['begin_time'] }} 结束于{{ conflict_activity['end_time'] }}\n冲突活动名称：\n{{ conflict_activity['activity_name'] }}")
+    </script>
+{% endif %}
+{% if conflict_in_course %}
+    <script>
+        window.alert("此活动和您的课程有时间冲突\n冲突课程时间:\n{{ conflict_which_course['time'] }}\n冲突课程名称：\n{{ conflict_which_course['cause_name'] }}")
+    </script>
+{% endif %}
 </body>
 </html>

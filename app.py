@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, g, session
 import setting
 import json
+import datetime
 from signals import logging_in, login_space, in_course, route_in, out_activity, in_course_add, in_course_delete, \
     in_course_change, out_activity_set
 from forms import OutCourseForms, InCourseForms
@@ -19,10 +20,19 @@ admins = json.load(admin_filePtr)
 student = json.load(student_filePtr)
 courses = json.load(course_filePtr)
 out_courses = json.load(out_course_filePtr)
-print(admins)
-print(student)
-print(out_courses)
 time_list = [10, 0, 0]
+chToint = {"一": 1, "二": 2, "三": 3, "四": 4, "五": 5, "六": 6, "日": 7}
+
+
+def sort_activity_time(e):
+    return e['activity_time']
+
+
+def strToWeekDay(str):
+    str = str.split('-')
+    time = datetime.datetime(int(str[0]), int(str[1]), int(str[2]))
+    weekday = time.weekday() + 1
+    return weekday
 
 
 @app.route('/')
@@ -230,6 +240,7 @@ def in_course_add_func():
         cause_name = request.form.get('cause_name')
         teacher = request.form.get('teacher')
         time = request.form.get('time')
+        class_end_time = request.form.get('class_end_time')
         day = request.form.get('day')
         location = request.form.get('location')
         class_num = request.form.get('class_num')
@@ -237,7 +248,7 @@ def in_course_add_func():
         exam_time = request.form.get('exam_time').replace("T", " ")
         end_time = request.form.get('end_time').replace("T", " ")
 
-        newcourse = {"cause_name": cause_name, "teacher": teacher, "time": day + time,
+        newcourse = {"cause_name": cause_name, "teacher": teacher, "time": day + time + '~' + class_end_time,
                      "location": location + ' ' + class_num,
                      "qq": qq, "exam_time": exam_time + '~~' + end_time}
 
@@ -289,13 +300,14 @@ def in_course_change_fun():
         course_name = request.form.get('cause_name')
         teacher = request.form.get('teacher')
         time = request.form.get('time')
+        class_end_time = request.form.get('class_end_time')
         day = request.form.get('day')
         location = request.form.get('location')
         class_num = request.form.get('class_num')
         qq = request.form.get('qq')
         exam_time = request.form.get('exam_time').replace('T', ' ')
         end_time = request.form.get('end_time').replace('T', ' ')
-        newcourse = {"cause_name": course_name, "teacher": teacher, "time": day + time,
+        newcourse = {"cause_name": course_name, "teacher": teacher, "time": day + time + '~' + class_end_time,
                      "location": location + ' ' + class_num,
                      "qq": qq, "exam_time": exam_time + "~~" + end_time}
 
@@ -319,6 +331,10 @@ def out_course_fun():
 
 @app.route('/out_course/admin/add', methods=['POST', 'GET'])
 def out_course_add_fun():
+    conflict = False
+    conflict_activity = {}
+    conflict_in_course = False
+    conflict_which_course = {}
     form = OutCourseForms()
     global time_list
 
@@ -334,12 +350,41 @@ def out_course_add_fun():
         new_out_course = {'activity_name': activity_name, 'activity_time': activity_time, 'begin_time': begin_time,
                           'end_time': end_time,
                           'persons_num': persons_num, 'location': location}
-        out_courses.append(new_out_course)
+        # 活动时间冲突检测
+        out_courses_temp = list(out_courses)
+        out_courses_temp.sort(key=sort_activity_time)
+        for out_courses_activity in out_courses_temp:
+            if activity_time == out_courses_activity['activity_time']:
+                #     进入活动时间的判断
+                if (out_courses_activity['begin_time'] < begin_time < out_courses_activity['end_time']) \
+                        or (
+                        out_courses_activity['begin_time'] < end_time < out_courses_activity['end_time']):
+                    conflict = True
+                    conflict_activity = out_courses_activity
+                    break
+        # 课程时间冲突检测
+        in_course_temp = list(courses)
+        weekday = strToWeekDay(activity_time)
+        for one_in_course in in_course_temp:
+            int_day = chToint[one_in_course["time"][2]]
+            if weekday == int_day:
+                course_begin_time = one_in_course['time'][3:8]
+                course_end_time = one_in_course['time'][9:]
+                if (course_begin_time < begin_time < course_end_time) or (
+                        course_begin_time < end_time < course_end_time):
+                    conflict_in_course = True
+                    conflict_which_course = one_in_course
+                    break
 
-        with open('./static/data/out_course.json', "w", encoding='utf-8') as fp:
-            json.dump(out_courses, fp, ensure_ascii=False, separators=('\n,', ':'))
-        return redirect('/out_course/admin')
-    return render_template('add_out_course.html', cla3='active', posts=out_courses, time_que=time_list, form=form)
+        if not (conflict or conflict_in_course):
+            out_courses.append(new_out_course)
+            with open('./static/data/out_course.json', "w", encoding='utf-8') as fp:
+                json.dump(out_courses, fp, ensure_ascii=False, separators=('\n,', ':'))
+            return redirect('/out_course/admin')
+
+    return render_template('add_out_course.html', cla3='active', posts=out_courses, time_que=time_list, form=form,
+                           conflict=conflict, conflict_activity=conflict_activity,
+                           conflict_in_course=conflict_in_course, conflict_which_course=conflict_which_course)
 
 
 @app.route('/out_course/admin/delete', methods=['POST', 'GET'])
@@ -361,7 +406,10 @@ def out_course_del_fun():
 
 @app.route('/out_course/admin/change', methods=['POST', 'GET'])
 def out_course_change_fun():
-
+    conflict = False
+    conflict_activity = {}
+    conflict_in_course = False
+    conflict_which_course = {}
     form = OutCourseForms()
     id2 = request.args.get('id2')
     activity_name = request.args.get('activity_name')
@@ -390,16 +438,46 @@ def out_course_change_fun():
         new_out_course = {'activity_name': activity_name, 'activity_time': activity_time, 'begin_time': begin_time,
                           'end_time': end_time,
                           'persons_num': persons_num, 'location': location}
-        out_courses.insert(int(id2) - 1, new_out_course)
+        # 活动时间冲突检测
+        out_courses_temp = list(out_courses)
+        out_courses_temp.sort(key=sort_activity_time)
+        for out_courses_activity in out_courses_temp:
+            if activity_time == out_courses_activity['activity_time']:
+                #     进入活动时间的判断
+                if (out_courses_activity['begin_time'] < begin_time < out_courses_activity['end_time']) \
+                        or (
+                        out_courses_activity['begin_time'] < end_time < out_courses_activity['end_time']):
+                    conflict = True
+                    conflict_activity = out_courses_activity
+                    break
 
-        with open('./static/data/out_course.json', "w", encoding='utf-8') as fp:
-            json.dump(out_courses, fp, ensure_ascii=False, separators=('\n,', ':'))
-        return redirect('/out_course/admin')
+        # 课程时间冲突检测
+        in_course_temp = list(courses)
+        weekday = strToWeekDay(activity_time)
+        for one_in_course in in_course_temp:
+            int_day = chToint[one_in_course["time"][2]]
+            if weekday == int_day:
+                course_begin_time = one_in_course['time'][3:8]
+                course_end_time = one_in_course['time'][9:]
+                if (course_begin_time < begin_time < course_end_time) or (
+                        course_begin_time < end_time < course_end_time):
+                    conflict_in_course = True
+                    conflict_which_course = one_in_course
+                    break
+
+        if not (conflict or conflict_in_course):
+            out_courses.insert(int(id2) - 1, new_out_course)
+
+            with open('./static/data/out_course.json', "w", encoding='utf-8') as fp:
+                json.dump(out_courses, fp, ensure_ascii=False, separators=('\n,', ':'))
+            return redirect('/out_course/admin')
 
     return render_template('change_out_course.html', activity_name=activity_name, activity_time=activity_time,
                            begin_time=begin_time,
                            end_time=end_time,
-                           persons_num=persons_num, location=location,form=form)
+                           persons_num=persons_num, location=location, form=form, conflict=conflict,
+                           conflict_activity=conflict_activity, conflict_in_course=conflict_in_course,
+                           conflict_which_course=conflict_which_course)
 
 
 @app.route('/out_course/student', methods=['POST', 'GET'])
@@ -413,7 +491,10 @@ def out_course_fun_stu():
 @app.route('/out_course/student/add', methods=['POST', 'GET'])
 def out_course_add_fun_stu():
     form = OutCourseForms()
-
+    conflict = False
+    conflict_activity = {}
+    conflict_in_course = False
+    conflict_which_course = {}
     global time_list
     if request.method == 'POST':
         g.uname = session.get('now_user')
@@ -427,11 +508,42 @@ def out_course_add_fun_stu():
         new_out_course = {'activity_name': activity_name, 'activity_time': activity_time, 'begin_time': begin_time,
                           'end_time': end_time,
                           'persons_num': persons_num, 'location': location}
-        out_courses.append(new_out_course)
-        with open('./static/data/out_course.json', "w", encoding='utf-8') as fp:
-            json.dump(out_courses, fp, ensure_ascii=False, separators=('\n,', ':'))
-        return redirect('/out_course/student')
-    return render_template('add_out_course.html', cla3='activate', posts=out_courses, time_que=time_list, form=form)
+        # 活动时间冲突检测
+        out_courses_temp = list(out_courses)
+        out_courses_temp.sort(key=sort_activity_time)
+        for out_courses_activity in out_courses_temp:
+            if activity_time == out_courses_activity['activity_time']:
+                #     进入活动时间的判断
+                if (out_courses_activity['begin_time'] < begin_time < out_courses_activity['end_time']) \
+                        or (
+                        out_courses_activity['begin_time'] < end_time < out_courses_activity['end_time']):
+                    conflict = True
+                    conflict_activity = out_courses_activity
+                    break
+
+        # 课程时间冲突检测
+        in_course_temp = list(courses)
+        weekday = strToWeekDay(activity_time)
+        for one_in_course in in_course_temp:
+            int_day = chToint[one_in_course["time"][2]]
+            if weekday == int_day:
+                course_begin_time = one_in_course['time'][3:8]
+                course_end_time = one_in_course['time'][9:]
+                if (course_begin_time < begin_time < course_end_time) or (
+                        course_begin_time < end_time < course_end_time):
+                    conflict_in_course = True
+                    conflict_which_course = one_in_course
+                    break
+
+        if not (conflict or conflict_in_course):
+            out_courses.append(new_out_course)
+            with open('./static/data/out_course.json', "w", encoding='utf-8') as fp:
+                json.dump(out_courses, fp, ensure_ascii=False, separators=('\n,', ':'))
+            return redirect('/out_course/student')
+
+    return render_template('add_out_course.html', cla3='activate', posts=out_courses, time_que=time_list, form=form,
+                           conflict=conflict, conflict_activity=conflict_activity,
+                           conflict_in_course=conflict_in_course, conflict_which_course=conflict_which_course)
 
 
 @app.route('/out_course/student/delete', methods=['POST', 'GET'])
@@ -461,7 +573,10 @@ def out_course_change_fun_stu():
     end_time = request.args.get('end_time')
     persons_num = request.args.get('persons_num')
     location = request.args.get('location')
-
+    conflict = False
+    conflict_activity = {}
+    conflict_in_course = False
+    conflict_which_course = {}
     if request.method == 'GET':
         if int(id1) - 1 == len(out_courses):
             out_courses.pop(-1)
@@ -480,16 +595,46 @@ def out_course_change_fun_stu():
         new_out_course = {'activity_name': activity_name, 'activity_time': activity_time, 'begin_time': begin_time,
                           'end_time': end_time,
                           'persons_num': persons_num, 'location': location}
-        out_courses.insert(int(id1) - 1, new_out_course)
+        # 活动时间冲突检测
+        out_courses_temp = list(out_courses)
+        out_courses_temp.sort(key=sort_activity_time)
+        for out_courses_activity in out_courses_temp:
+            if activity_time == out_courses_activity['activity_time']:
+                #     进入活动时间的判断
+                if (out_courses_activity['begin_time'] < begin_time < out_courses_activity['end_time']) \
+                        or (
+                        out_courses_activity['begin_time'] < end_time < out_courses_activity['end_time']):
+                    conflict = True
+                    conflict_activity = out_courses_activity
+                    break
 
-        with open('./static/data/out_course.json', "w", encoding='utf-8') as fp:
-            json.dump(out_courses, fp, ensure_ascii=False, separators=('\n,', ':'))
-        return redirect('/out_course/student')
+        # 课程时间冲突检测
+        in_course_temp = list(courses)
+        weekday = strToWeekDay(activity_time)
+        for one_in_course in in_course_temp:
+            int_day = chToint[one_in_course["time"][2]]
+            if weekday == int_day:
+                course_begin_time = one_in_course['time'][3:8]
+                course_end_time = one_in_course['time'][9:]
+                if (course_begin_time < begin_time < course_end_time) or (
+                        course_begin_time < end_time < course_end_time):
+                    conflict_in_course = True
+                    conflict_which_course = one_in_course
+                    break
+
+        if not (conflict or conflict_in_course):
+            out_courses.insert(int(id1) - 1, new_out_course)
+
+            with open('./static/data/out_course.json', "w", encoding='utf-8') as fp:
+                json.dump(out_courses, fp, ensure_ascii=False, separators=('\n,', ':'))
+            return redirect('/out_course/student')
 
     return render_template('change_out_course.html', activity_name=activity_name, activity_time=activity_time,
                            begin_time=begin_time,
                            end_time=end_time,
-                           persons_num=persons_num, location=location,form=form)
+                           persons_num=persons_num, location=location, form=form, conflict=conflict,
+                           conflict_activity=conflict_activity, conflict_in_course=conflict_in_course,
+                           conflict_which_course=conflict_which_course)
 
 
 @app.route('/route/admin', methods=['POST', 'GET'])
@@ -566,19 +711,22 @@ def logging_fun():
 def show():
     return
 
+
 @app.route('/direct_course/<course>/')
 def direct_course(course):
-    flag=0
-    post=None
+    flag = 0
+    post = None
     print(courses)
     for a in courses:
-        if a.get("cause_name")==course:
-            flag=1
-            post=a
-    if flag==0:
+        if a.get("cause_name") == course:
+            flag = 1
+            post = a
+    if flag == 0:
         return render_template("NotFound.html")
     else:
-        return render_template("causes_page.html",post=post)
+        return render_template("causes_page.html", post=post)
+
+
 @app.route('/time_control', methods=['POST'])  # 用于控制时间 ，所有的时间系统都采用当前的操作
 def time_control():
     time = request.form.get('time')

@@ -696,7 +696,7 @@ def logging_fun():
             contents = f.read()
             a = contents.split('\n')
             a.reverse()
-        return render_template('admin_new.html', posts=a)
+        return render_template('admin_new.html', posts=a,time_que=time_list)
     else:
         logging_in.send()
         with open('logging.log', 'r', encoding='utf-8') as f:
@@ -705,12 +705,6 @@ def logging_fun():
             a = contents.split('\n')
             a.reverse()
         return render_template('admin_new.html', posts=a, time_que=time_list)
-
-
-@app.route('/course_inf', methods=['POST', 'GET'])
-def show():
-    return
-
 
 @app.route('/direct_course/<course>/')
 def direct_course(course):

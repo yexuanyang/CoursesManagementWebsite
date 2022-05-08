@@ -90,10 +90,10 @@
 {% endblock %}
 {% block otherscripts %}
 <script>
-var t = layui.table;
+var te = layui.table;
 
 //转换静态表格
-t.init('demo', {
+te.init('demo', {
   height: 500 //设置高度
   ,limit: 10 //注意：请务必确保 limit 参数（默认：10）是与你服务端限定的数据条数一致
     ,page:true //开启分页
@@ -118,7 +118,7 @@ function myFunction() {
     }
     var mydata=document.getElementById("myData");
     mydata.innerHTML=list;
-    t.init('demo', { //重新加载
+    te.init('demo', { //重新加载
             height: 500 //设置高度
             ,limit: 10 //注意：请务必确保 limit 参数（默认：10）是与你服务端限定的数据条数一致
             ,page:true //开启分页
@@ -143,7 +143,7 @@ function myFunction1() {
     }
     var mydata=document.getElementById("myData");
     mydata.innerHTML=list;
-    t.init('demo', { //重新加载
+    te.init('demo', { //重新加载
             height: 500 //设置高度
             ,limit: 10 //注意：请务必确保 limit 参数（默认：10）是与你服务端限定的数据条数一致
             ,page:true //开启分页

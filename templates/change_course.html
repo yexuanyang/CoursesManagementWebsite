@@ -44,6 +44,10 @@
         {{ form.submit }}
     </div>
 </form>
-
+{% if conflict %}
+    <script>
+        window.alert("课程和其他课程时间有冲突，冲突课程信息：\n课程时间：{{ conflict_course['time'] }}~~{{ conflict_course['class_end_time'] }}\n课程名称：{{ conflict_course['cause_name'] }}")
+    </script>
+{% endif %}
 </body>
 </html>

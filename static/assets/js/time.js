@@ -6,9 +6,12 @@ console.log(timeset);
 var accelerator = document.getElementById('quicker');
 accelerator.onclick = bequicker;
 t = setInterval(faketime, timeset);
+//获取日期
+var week=document.getElementById('week');
 var hour = document.getElementById('hour');
 var minute = document.getElementById('min');
 var second1 = document.getElementById('second');
+var W=week.innerHTML;
 var H = hour.innerHTML;
 var min = minute.innerHTML;
 var second = second1.innerHTML;
@@ -32,6 +35,12 @@ function faketime() {
         second = 0;
         if (min == 59) {
             if (H == 23) {
+                if(W==7){
+                    W=1;
+                }
+                else{
+                    W++;
+                }
                 H = 0;
                 min = 0;
                 second = 0;
@@ -47,7 +56,7 @@ function faketime() {
     } else {
         second++;
     }
-    data_list=[H,min,second];
+    data_list=[W,H,min,second];
     var time_json={
         time:JSON.stringify(data_list)
     };
@@ -64,7 +73,7 @@ function faketime() {
 }
 
 function draw() {
-
+    week.innerHTML=W;
     hour.innerHTML = H;
     minute.innerHTML = min;
     second1.innerHTML = second;

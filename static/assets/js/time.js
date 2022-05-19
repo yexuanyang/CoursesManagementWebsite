@@ -2,7 +2,7 @@
 var t = null; //这里是执行时间的函数
 var multiple = 3; //这里是加速的倍数
 var timeset = 10 / multiple; //开始为每10毫秒运行一次  这里除以倍数
-console.log(timeset);
+// console.log(timeset);
 var accelerator = document.getElementById('quicker');
 accelerator.onclick = bequicker;
 t = setInterval(faketime, timeset);
@@ -11,6 +11,12 @@ var week = document.getElementById('week');
 var hour = document.getElementById('hour');
 var minute = document.getElementById('min');
 var second1 = document.getElementById('second');
+
+console.log(week);
+console.log(hour);
+console.log(minute);
+console.log(second1);
+
 var W = week.innerHTML;
 var H = hour.innerHTML;
 var min = minute.innerHTML;
@@ -34,7 +40,10 @@ var chtoInt = {
 
 var in_course_time = document.getElementsByClassName("courseTime");
 // console.log(in_course_time);
-// console.log(in_course_time[1]["outerText"]);
+console.log(parseInt(in_course_time[1].innerHTML.substring(3, 5)));
+console.log(parseInt(in_course_time[1].innerHTML.substring(6, 8)));
+console.log(parseInt(in_course_time[1].innerHTML.substring(9, 11)));
+console.log(parseInt(in_course_time[1].innerHTML.substring(12)));
 // console.log(chtoInt[in_course_time[1]["outerText"][2]]);
 // console.log(in_course_time[1]["outerText"].substring(3,8));
 // console.log(in_course_time[1]["outerText"].substring(9));
@@ -53,6 +62,8 @@ var out_course_end_time = document.getElementsByClassName("outCourseEndTime");
 // console.log(out_course_end_time[1]["outerText"]);
 var out_course_date = document.getElementsByClassName("outCourseDate");
 // console.log(out_course_date[1]["outerText"]);
+var class_begin = false;
+var class_end = false;
 
 console.log(second);
 console.log(typeof second);
@@ -62,7 +73,6 @@ console.log(H);
 console.log(typeof H);
 
 function faketime() {
-    let find = false;
     if (parseInt(W) >= 7) {
         W %= 7;
     }
@@ -72,7 +82,7 @@ function faketime() {
     if (parseInt(min) >= 60) {
         min %= 60;
     }
-    if (second >= 60) {
+    if (parseInt(second) >= 60) {
         second %= 60;
     }
     if (parseInt(second) === 59) {
@@ -96,22 +106,24 @@ function faketime() {
             min++;
             second = 0;
         }
-        find = false;
     } else {
         second++;
     }
     data_list = [W, H, min, second];
     for (let i = 0; i < in_course_time.length; i++) {
-        const inCourseTimeKey = in_course_time[i];
-        const day = chtoInt[inCourseTimeKey["outerText"][2]];
+        const inCourseTimeKey = in_course_time[i].innerHTML;
+        const day = chtoInt[inCourseTimeKey[2]];
         if (day === parseInt(W)) {
-            if (!find && H === parseInt(inCourseTimeKey["outerText"].substring(3, 5)) && min === parseInt(inCourseTimeKey["outerText"].substring(6, 7))) {
-                window.alert(course_name[i]['outerText'] + "开始上课了");
-                find = true;
+            if (!class_begin && parseInt(H) === parseInt(inCourseTimeKey.substring(3, 5)) && parseInt(min) === parseInt(inCourseTimeKey.substring(6, 8))) {
+                window.alert(course_name[i].innerHTML + "开始上课了");
+                class_begin = true;
+                class_end = false;
                 break;
-            } else if (!find && H === parseInt(inCourseTimeKey["outerText"].substring(9, 11) && min === parseInt(inCourseTimeKey['outerText'].substring(12)))) {
-                window.alert(course_name[i]['outerText'] + "下课了");
-                find = true;
+            }
+            if (!class_end && parseInt(H) === parseInt(inCourseTimeKey.substring(9, 11) ) && parseInt(min) === parseInt(inCourseTimeKey.substring(12))) {
+                window.alert(course_name[i].innerHTML + "下课了");
+                class_end = true;
+                class_begin = false;
                 break;
             }
         }

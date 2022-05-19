@@ -41,7 +41,7 @@
                                 {% for post in posts %}
                                     <tr>
                                         <td>{{ loop.index }}</td>
-                                        <td class = "courseName"><a href="/direct_course/{{ post.cause_name }}">{{ post.cause_name}}</a></td>
+                                        <td><a href="/direct_course/{{ post.cause_name }}" class = "courseName">{{ post.cause_name}}</a></td>
                                         <td>{{ post.teacher }}</td>
                                         <td class="courseTime">{{ post.time }}</td>
                                         <td>{{ post.location }}</td>

@@ -6,6 +6,7 @@ var timeset = 10 / multiple; //开始为每10毫秒运行一次  这里除以倍
 var accelerator = document.getElementById('quicker');
 accelerator.onclick = bequicker;
 t = setInterval(faketime, timeset);
+var music=document.getElementById("music");//得到的音乐
 //获取日期
 var year=document.getElementById('year');
 var month=document.getElementById('month');
@@ -28,8 +29,9 @@ pause.onclick = pause_fun;
 //用于记录数组的格式
 var data_list = [Y,MONTH,DAY,W,H, min, second];
 var date=new Date(2022,5,19);
-
-console.log("yes"+date);
+var popupwindow=document.getElementById("Popupwindow");
+var popupwindowtitle=document.getElementById("Popwindowtitle");//标题
+var popupwindowmsg=document.getElementById("Popwindowmsg");//内容
 var chtoInt = {
     "一": 1,
     "二": 2,
@@ -134,6 +136,7 @@ function faketime() {
         second = 0;
         if (parseInt(min) === 59) {
             if (parseInt(H) === 23) {
+                dateplie();
                 if (parseInt(W) === 7) {
                     W = 1;
                 } else {
@@ -181,7 +184,10 @@ function faketime() {
             out_course_begin = true;
             out_course_end = true;
             //window.alert( course_name[i].innerHTML + "考试" + "开始了\n结束时间："+ endDate );
-            window.alert(course_name_json[i] + "考试" + "开始了\n结束时间：" + endDate);
+            // window.alert(course_name_json[i] + "考试" + "开始了\n结束时间：" + endDate);
+            popupwindowtitle.innerHTML=course_name_json[i] + "考试" + "开始了\n结束时间：" + endDate;
+            popupwindowtitle.innerHTML="考试时间到";
+            popupwindow.style.display="block";
             break;
         }
         if (!exam_end && endYear === parseInt(Y) && endMonth === parseInt(MONTH) && endDay === parseInt(DAY) && endHour === parseInt(H) && endMin === parseInt(min)) {
@@ -192,23 +198,34 @@ function faketime() {
             out_course_begin = false;
             out_course_end = false;
             //window.alert( course_name[i].innerHTML + "考试" + "结束了" );
-            window.alert(course_name_json[i] + "考试" + "结束了");
+            // window.alert(course_name_json[i] + "考试结束了" );
+            music.play();//播放音乐
+            popupwindowtitle.innerHTML="考试";
+            popupwindowmsg.innerHTML=course_name_json[i] + "考试结束了";
+            popupwindow.style.display="block";
             break;
         }
 
         if (weekday === parseInt(W)) {
             if (!class_begin && parseInt(H) === parseInt(inCourseTimeKey.substring(3, 5)) && parseInt(min) === parseInt(inCourseTimeKey.substring(6, 8))) {
-                window.alert(course_name_json[i] + "开始上课了");
+                // window.alert(course_name_json[i] + "开始上课了");
+                music.play();//播放音乐
+                popupwindowtitle.innerHTML="上课";
+                popupwindowmsg.innerHTML=course_name_json[i] + "上课了";
+                popupwindow.style.display="block";
                 class_begin = true;
                 class_end = false;
-
                 //上课不能进行课外活动，把课外活动设置为已经开始
                 out_course_begin = true;
                 out_course_end = true;
                 break;
             }
             if (!class_end && parseInt(H) === parseInt(inCourseTimeKey.substring(9, 11)) && parseInt(min) === parseInt(inCourseTimeKey.substring(12))) {
-                window.alert(course_name_json[i] + "下课了");
+                // window.alert(course_name_json[i] + "下课了");
+                music.play();//播放音乐
+                popupwindowtitle.innerHTML="下课了";
+                popupwindowmsg.innerHTML=course_name_json[i] + "下课了";
+                popupwindow.style.display="block";
                 class_end = true;
                 class_begin = false;
                 //下课了可以进行课外活动，把课外活动设置为未开始
@@ -238,14 +255,22 @@ function faketime() {
         if (!out_course_begin && year === parseInt(Y) && month === parseInt(MONTH) && day === parseInt((DAY)) && BeginTimeHour === parseInt(H) && BeginTimeMin === parseInt(min)) {
             out_course_begin = true;
             out_course_end = false;
-            window.alert("课外活动 " + out_course_name_json[i] + " 开始了\n结束时间：" + out_course_end_time_key);
+            // window.alert("课外活动 " + out_course_name_json[i] + " 开始了\n结束时间：" + out_course_end_time_key);
+            music.play();//播放音乐
+            popupwindowtitle.innerHTML="课外活动";
+            popupwindowmsg.innerHTML="课外活动 " + out_course_name_json[i] + " 开始了\n结束时间：" + out_course_end_time_key;
+            popupwindow.style.display="block";
             break;
         }
         if (!out_course_end && year === parseInt(Y) && month === parseInt(MONTH) && day === parseInt((DAY)) && EndTimeHour === parseInt(H) && EndTimeMin === parseInt(min)) {
             out_course_begin = false;
             out_course_end = true;
             //window.alert("课外活动 "+out_course_name[i].innerHTML+" 结束了");
-            window.alert("课外活动 " + out_course_name_json[i] + " 结束了");
+            // window.alert("课外活动 " + out_course_name_json[i] + " 结束了");
+            music.play();//播放音乐
+            popupwindowtitle.innerHTML="课外活动";
+            popupwindowmsg.innerHTML="课外活动 " + out_course_name_json[i] + " 结束了";
+            popupwindow.style.display="block";
             break;
         }
 

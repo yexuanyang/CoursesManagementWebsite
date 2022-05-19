@@ -14,6 +14,7 @@
     <link rel="apple-touch-icon-precomposed" href="/static/assets/i/app-icon72x72@2x.png">
     <meta name="apple-mobile-web-app-title" content="Amaze UI"/>
     <link rel="stylesheet" href="/static/assets/css/amazeui.min.css"/>
+    <link rel="stylesheet" href="/static/assets/css/Window.css">
     <link rel="stylesheet" href="/static/assets/css/admin.css">
     <link rel="stylesheet" href="/static/assets/css/app.css">
     <link rel="stylesheet" href="../static/css/bootstrap.css">
@@ -93,6 +94,17 @@
         </div>
     </div>
     {% block content %} {% endblock %}
+        <div class="modal-container modal-remove" id="Popupwindow">
+        <div class="modal-mask"> </div>
+        <div class="modal-alert vertical-center">
+            <div class="modal-title title" id="Popwindowtitle">title</div>
+            <div class="modal-message" id="Popwindowmsg">message</div>
+            <div class="modal-control">
+                <button class="modal-button" type="button" name="button">ok</button>
+            </div>
+        </div>
+    </div>
+    <audio src="/static/music/qb.mp3" preload="none" controls style="display: none;" id="music"></audio>
 </div>
 <!-- 这里是内容 -->
 
@@ -102,6 +114,16 @@
 <script src="/static/assets/js/amazeui.min.js"></script>
 <script src="/static/assets/js/app.js"></script>
 <script src="/static/assets/js/time.js"></script>
+<script>
+    var mu=document.getElementById("music");
+        $('.modal-button').on('click', function() {
+        console.log('click ok');
+        var popwindow = document.getElementById("Popupwindow");
+        popwindow.style.display = "none";
+        mu.pause();
+        mu.currentTime=0;
+    })
+</script>
 {% block otherscripts %}{% endblock %}
 
 </body>

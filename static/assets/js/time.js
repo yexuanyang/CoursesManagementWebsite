@@ -7,16 +7,16 @@ var accelerator = document.getElementById('quicker');
 accelerator.onclick = bequicker;
 t = setInterval(faketime, timeset);
 //获取日期
+var year=document.getElementById('year');
+var month=document.getElementById('month');
+var day=document.getElementById('day');
 var week = document.getElementById('week');
 var hour = document.getElementById('hour');
 var minute = document.getElementById('min');
 var second1 = document.getElementById('second');
-
-console.log(week);
-console.log(hour);
-console.log(minute);
-console.log(second1);
-
+var Y=year.innerHTML;
+var MONTH=month.innerHTML;
+var DAY=day.innerHTML;
 var W = week.innerHTML;
 var H = hour.innerHTML;
 var min = minute.innerHTML;
@@ -25,9 +25,11 @@ var btn2 = document.getElementById('act');
 btn2.onclick = act;
 var pause = document.getElementById('pause');
 pause.onclick = pause_fun;
-var data_list = [H, min, second];//用于记录数组的格式
-console.log(data_list);
+//用于记录数组的格式
+var data_list = [Y,MONTH,DAY,W,H, min, second];
+var date=new Date(2022,5,19);
 
+console.log("yes"+date);
 var chtoInt = {
     "一": 1,
     "二": 2,
@@ -44,33 +46,16 @@ console.log(parseInt(in_course_time[1].innerHTML.substring(3, 5)));
 console.log(parseInt(in_course_time[1].innerHTML.substring(6, 8)));
 console.log(parseInt(in_course_time[1].innerHTML.substring(9, 11)));
 console.log(parseInt(in_course_time[1].innerHTML.substring(12)));
-// console.log(chtoInt[in_course_time[1]["outerText"][2]]);
-// console.log(in_course_time[1]["outerText"].substring(3,8));
-// console.log(in_course_time[1]["outerText"].substring(9));
 
 var course_name = document.getElementsByClassName("courseName");
-// console.log(course_name);
 
 var exam_time = document.getElementsByClassName("examTime");
-// console.log(exam_time[1]["outerText"]);
-// console.log(exam_time[1]["outerText"].substring(11,16));
-// console.log(exam_time[1]["outerText"].substring(29));
 
 var out_course_begin_time = document.getElementsByClassName("outCourseBeginTime");
-// console.log(out_course_begin_time[1]["outerText"]);
 var out_course_end_time = document.getElementsByClassName("outCourseEndTime");
-// console.log(out_course_end_time[1]["outerText"]);
 var out_course_date = document.getElementsByClassName("outCourseDate");
-// console.log(out_course_date[1]["outerText"]);
 var class_begin = false;
 var class_end = false;
-
-console.log(second);
-console.log(typeof second);
-console.log(min);
-console.log(typeof min);
-console.log(H);
-console.log(typeof H);
 
 function faketime() {
     if (parseInt(W) >= 7) {
@@ -109,7 +94,7 @@ function faketime() {
     } else {
         second++;
     }
-    data_list = [W, H, min, second];
+    data_list = [Y,MONTH,DAY,W, H, min, second];
     for (let i = 0; i < in_course_time.length; i++) {
         const inCourseTimeKey = in_course_time[i].innerHTML;
         const day = chtoInt[inCourseTimeKey[2]];
@@ -142,8 +127,13 @@ function faketime() {
     });
     draw();
 }
-
+/*
+绘制时间
+*/
 function draw() {
+    year.innerHTML=Y;
+    month.innerHTML=MONTH;
+    day.innerHTML=DAY;
     week.innerHTML = W;
     hour.innerHTML = H;
     minute.innerHTML = min;
@@ -151,7 +141,6 @@ function draw() {
 }
 
 function pause_fun() { //用于停止时间
-    console.log(t);
     clearInterval(t);
 }
 
@@ -168,7 +157,6 @@ function bequicker() {
         multiple = 1;
     }
     timeset = 100 / multiple
-    console.log(t);
     clearInterval(t);//先清除掉定时器
     t = setInterval(faketime, timeset);
 }
@@ -319,4 +307,58 @@ function route_organization() {
         schoolbus_need.innerHTML = list_schoolbus1[sbindex];
         schoolbustime.innerHTML = sbwt + 40;//等待时间+车辆行驶时间
     }
+}
+//记录平年和闰年每个月的日期
+var MonthTable=[
+    [0,0],
+    [31,31],
+    [28,29],
+    [31,31],
+    [30,30],
+    [31,31],
+    [30,30],
+    [31,31],
+    [31,31],
+    [30,30],
+    [31,31],
+    [30,30],
+    [31,31]
+];
+//var data_list = [Y,MONTH,DAY,W,H, min, second]; 定义
+console("MONTH:"+MONTH);
+function dateplie(){ //用于日期的自增
+    //判断是平年还是闰年
+    var f=0;//默认是平年
+    //逻辑
+    /*
+    访问逻辑：
+        当到达当月最多的天数的时候
+        当f=1访问数组中的元素是MonthTable[MONTH][f]则可以判断
+     */
+    if(isLeap(Y)){//如果是闰年
+        f=1;
+    }
+    else{
+        f=0;
+    }
+    if(parseInt(DAY)===MonthTable[MONTH][f]){ //如果达到当月的最后一天
+        DAY=1;
+        if(MONTH==12){ //如果到达12月份
+            Y++;//到达下一个年份
+            MONTH=1;
+        }else{
+            MONTH++;
+        }
+    }else{
+        DAY++;
+    }
+}
+/*
+判断闰年
+判断逻辑：
+    整除4但不能除以100
+    或者 可以整除400
+ */
+function isLeap(year){
+    return (year %4==0 && year%100!=0) || (year %400==0);
 }

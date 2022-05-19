@@ -29,7 +29,7 @@ out_courses = json.load(out_course_filePtr)
 courses_material=json.load(course_material_filePtr)
 homework=json.load(homework_filePtr)
 test=json.load(test_filePtr)
-time_list = [1,10, 0, 0]
+time_list = [2022,5,15,7,10, 0, 0]
 chToint = {"一": 1, "二": 2, "三": 3, "四": 4, "五": 5, "六": 6, "日": 7}
 '''
 关于这里使用的解释：
@@ -879,7 +879,7 @@ def time_control():
     time = request.form.get('time')
     global time_list
     if (time_list == []):
-        time_list = [1,10, 0, 0]
+        time_list = [2022,5,15,7,10, 0, 0]
     time_list = json.loads(time)  # 得到了时间列表
     return "time_yes"
 

@@ -49,12 +49,12 @@
                                     <tr>
                                         <td><input type="checkbox" name="checklist" value="{{ loop.index }}"></td>
                                         <td>{{ loop.index }}</td>
-                                        <td><a href="/direct_course/{{ post.cause_name }}">{{ post.cause_name }}</a></td>
+                                        <td class="courseName"><a href="/direct_course/{{ post.cause_name }}">{{ post.cause_name }}</a></td>
                                         <td>{{ post.teacher }}</td>
-                                        <td>{{ post.time }}</td>
+                                        <td class="courseTime">{{ post.time }}</td>
                                         <td>{{ post.location }}</td>
                                         <td>{{ post.qq }}</td>
-                                        <td>{{ post.exam_time }}</td>
+                                        <td class="examTime">{{ post.exam_time }}</td>
                                         <td><a href="/in_course/admin/change?id1={{ loop.index }}&cause_name={{ post.cause_name }}&teacher={{ post.teacher }}&time={{ post.time }}&location={{ post.location }}&qq={{ post.qq }}&exam_time={{ post.exam_time }}">更新
                                             </a></td>
                                     </tr>

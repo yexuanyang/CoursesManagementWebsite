@@ -1,3 +1,4 @@
 bug for the app:
 1.we can't operate the time in the course page  已修复
 2.the UI in the route from one place to the other place has bug 已修复
+3.时间的加速系统有问题，多按几次开始就一直加速不会停下

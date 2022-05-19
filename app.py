@@ -290,7 +290,7 @@ def in_course_add_func():
                 json.dump(courses, fp, ensure_ascii=False, separators=('\n,', ':'))
             return redirect('/in_course/admin')
 
-    return render_template('add_course.html', form=form,conflict=conflict,conflict_course=conflict_course)
+    return render_template('add_course.html', form=form, conflict=conflict, conflict_course=conflict_course)
 
 
 @app.route('/in_course/admin/delete', methods=['POST', 'GET'])
@@ -322,7 +322,6 @@ def in_course_change_fun():
     exam_time = request.args.get('exam_time')
     conflict = False
     conflict_course = {}
-
 
     if request.method == 'GET':
         if len(courses) == int(id1) - 1:
@@ -368,7 +367,8 @@ def in_course_change_fun():
             return redirect('/in_course/admin')
 
     return render_template('change_course.html', form=form, time=time, location=location, exam_time=exam_time,
-                           cause_name=cause_name, qq=qq, teacher=teacher,conflict=conflict,conflict_course=conflict_course)
+                           cause_name=cause_name, qq=qq, teacher=teacher, conflict=conflict,
+                           conflict_course=conflict_course)
 
 
 @app.route('/out_course/admin', methods=['POST', 'GET'])
@@ -745,7 +745,7 @@ def logging_fun():
             contents = f.read()
             a = contents.split('\n')
             a.reverse()
-        return render_template('admin_new.html', posts=a,time_que=time_list)
+        return render_template('admin_new.html', posts=a, time_que=time_list)
     else:
         logging_in.send()
         with open('logging.log', 'r', encoding='utf-8') as f:
@@ -754,6 +754,7 @@ def logging_fun():
             a = contents.split('\n')
             a.reverse()
         return render_template('admin_new.html', posts=a, time_que=time_list)
+
 
 @app.route('/direct_course/<course>/')
 def direct_course(course):

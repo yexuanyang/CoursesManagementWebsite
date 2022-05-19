@@ -31,6 +31,7 @@ homework=json.load(homework_filePtr)
 test=json.load(test_filePtr)
 time_list = [2022,5,15,7,10, 0, 0]
 chToint = {"一": 1, "二": 2, "三": 3, "四": 4, "五": 5, "六": 6, "日": 7}
+
 '''
 关于这里使用的解释：
     由于路由中不能进行全局变量的修改则可以用以下方法进行操作
@@ -882,6 +883,15 @@ def time_control():
         time_list = [2022,5,15,7,10, 0, 0]
     time_list = json.loads(time)  # 得到了时间列表
     return "time_yes"
+
+
+@app.route('/getData4JS', methods=['POST','GET'])
+def get_data_4_js():
+    return json.dumps(courses,ensure_ascii=False)
+
+@app.route('/getData4JS2', methods=['POST','GET'])
+def get_data_4_js_2():
+    return json.dumps(out_courses,ensure_ascii=False)
 
 
 if __name__ == '__main__':

@@ -7,9 +7,8 @@ import json
 import datetime
 from werkzeug.utils import secure_filename
 from signals import logging_in, login_space, in_course, route_in, out_activity, in_course_add, in_course_delete, \
-    in_course_change, out_activity_set, data
+    in_course_change, out_activity_set, data,DataStore
 from forms import OutCourseForms, InCourseForms
-
 app = Flask(__name__)
 
 app.config.from_object(setting)
@@ -21,21 +20,17 @@ course_filePtr = open("./static/data/course.json", "r", encoding='utf-8')
 out_course_filePtr = open("./static/data/out_course.json", "r", encoding='utf-8')
 course_material_filePtr = open("./static/data/courses_material.json", "r", encoding='utf-8')
 homework_filePtr = open("./static/data/homework.json", "r", encoding='utf-8')
-test_filePtr = open("./static/data/test.json", "r", encoding='utf-8')
+# test_filePtr = open("./static/data/test.json", "r", encoding='utf-8')
 admins = json.load(admin_filePtr)
 student = json.load(student_filePtr)
 courses = json.load(course_filePtr)
 out_courses = json.load(out_course_filePtr)
 courses_material = json.load(course_material_filePtr)
 homework = json.load(homework_filePtr)
-test = json.load(test_filePtr)
-
+# test = json.load(test_filePtr)
 chToint = {"一": 1, "二": 2, "三": 3, "四": 4, "五": 5, "六": 6, "日": 7}
 
-'''
-关于这里使用的解释：
-    由于路由中不能进行全局变量的修改则可以用以下方法进行操作
-'''
+data1=DataStore()
 
 
 def sort_activity_time(e):
@@ -761,20 +756,21 @@ def logging_fun():
 
 @app.route('/direct_course/<course>/')
 def direct_course(course):
+    global homework
     global coursename
     material = None
     test1 = None
     homework1 = None
-    flag = 0
+    flag = -1
     flag1 = -1  # 不存在课程资料
     flag2 = -1  # 不存在作业
-    flag3 = -1  # 不存在考试
+    # flag3 = -1  # 不存在考试
     post = None
     for a in courses:
         if a.get("cause_name") == course:
             flag = 1
             post = a
-    if flag == 0:
+    if flag == -1:
         return render_template("NotFound.html")
     else:
         data.coursename = course
@@ -787,26 +783,19 @@ def direct_course(course):
         else:  # 如果存在的话
             material = courses_material[flag1]
 
-        for i in range(0, len(homework)):
-            if homework[i]["coursename"] == course:
-                flag2 = i
+        for j in range(0, len(homework)): #这里获得的大小
+            if homework[j]["coursename"] == course:
+                flag2 = j
                 break
         if flag2 == -1:  # 如果不存在
             homework1 = None
         else:  # 如果存在
-            homework1 = homework[flag1]
-
-        for i in range(0, len(test)):
-            if test[i]["coursename"] == course:
-                flag3 = i
-                break
-        if flag3 == -1:  # 如果不存在
-            test1 = None
-        else:  # 如果存在
-            test1 = test[flag3]
-
-        return render_template("causes_page", post=post, mat=material, hw=homework1, te=test1)
-
+            homework1 = homework[flag2]
+        homework_length=len(homework1["homework"])
+        material_length=len(material["material_name"])
+        print(post)
+        print(material)
+        return render_template("causes_page.html", post=post, mat=material, hw=homework1,hw_length=homework_length,mat_length=material_length)
 
 '''
 课程资料提交位置:
@@ -814,10 +803,11 @@ def direct_course(course):
 '''
 
 
-@app.route('/direct_course/materials/', methods=['POST'])
-def materials():
+@app.route('/direct_course/materials/<coursename_temp>', methods=['POST'])
+def materials_submit(coursename_temp):
     if request.method == "POST":
         UPLOAD_PATH = os.path.join(os.path.dirname(__file__), data.coursename)  # 当前的文件路径
+        print(data.coursename)
         if not os.path.exists(UPLOAD_PATH):  # 如果文件夹不存在则创建文件夹
             os.mkdir(UPLOAD_PATH)  # 创建文件夹
         material_file = request.files.get("course-file")
@@ -827,7 +817,7 @@ def materials():
         file_path = os.path.join(UPLOAD_PATH, file_name)
         material_file.save(file_path)
         flag = -1  # 还是标志是否存在这个课程的名称 如果不存在则增加
-        for i in range(0, courses_material):
+        for i in range(0, len(courses_material)):
             if courses_material[i]["coursename"] == data.coursename:
                 flag = i
                 break
@@ -838,12 +828,14 @@ def materials():
             with open('./static/data/courses_material.json', "w", encoding="utf-8") as fp:
                 json.dump(courses_material, fp, ensure_ascii=False, separators=('\n,', ':'))
         else:
-            courses_material[flag]["material"].append(file_name)  # 如果存在则增加名字
+            courses_material[flag]["material_name"].append(file_name)  # 如果存在则增加名字
 
         if request.form.get('compress') == "yes":
             file_encode(file_path)
-
-        return redirect("/direct_course/" + data.coursename + "/")
+        print(coursename_temp)
+        with open('./static/data/courses_material.json', "w", encoding="utf-8") as fp:#最后重新写入
+            json.dump(courses_material, fp, ensure_ascii=False, separators=('\n,', ':'))
+        return redirect("/direct_course/"+coursename_temp)
 
 
 '''
@@ -851,36 +843,47 @@ def materials():
 实现功能：压缩，查重
 '''
 
-
 @app.route('/direct_course/homework/', methods=['POST'])
-def homework():
+def homework_submit(): #前端表单中多添加了一个元素，用于标志第几次作业
     if request.method == "POST":
         UPLOAD_PATH = os.path.join(os.path.dirname(__file__), data.coursename + "_homework")  # 当前的文件路径
         if not os.path.exists(UPLOAD_PATH):  # 如果文件夹不存在则创建文件夹
             os.mkdir(UPLOAD_PATH)  # 创建文件夹
-        material_file = request.files.get("course-file")
+        #得到文件名
+        homework_file = request.files.get("course-homework")
         # 保存文件
-        filename = material_file.filename
+        filename = homework_file.filename
         file_name = secure_filename(filename)  # 文件名的安全转换
-        file_path = os.path.join(UPLOAD_PATH, file_name)
-        material_file.save(file_path)
+        index=int(request.form.get("homeworkoption"))#传递过来的提交第几次作业
+        print(index)
+        Directory_path=os.path.join(UPLOAD_PATH,f"第{index+1}次作业")
+        if not os.path.exists(Directory_path):
+            os.mkdir(Directory_path) #如果不存在第i次作业这个文件夹则创建
+        #得到新的文件位置
+        file_path = os.path.join(Directory_path, file_name)
         flag = -1  # 还是标志是否存在这个课程的名称 如果不存在则增加
-        for i in range(0, courses_material):
-            if courses_material[i]["coursename"] == data.coursename:
+        for i in range(0, len(homework)):
+            if homework[i]["coursename"] == data.coursename:
                 flag = i
                 break
-        if flag == -1:  # 如果不存在
-            length = len(courses_material)
-            temp = {"coursename": data.coursename, "material": [file_name]}
-            courses_material.append(temp)
-            with open('./static/data/courses_material.json', "w", encoding="utf-8") as fp:
-                json.dump(courses_material, fp, ensure_ascii=False, separators=('\n,', ':'))
+        if flag == -1:  # 如果不存在当前课程的作业，则增加当前的文件名
+            temp = {"coursename": data.coursename}
+            homework.append(temp)
         else:
-            courses_material[flag]["material"].append(file_name)  # 如果存在则增加名字
+            if file_name == homework[flag]["homework"][index]["filename"]:
+                data.homework_note="您的此次作业已提交，请勿重复提交"
+                data.homework_conflict=1 #发生了冲突
+            else: #如果当前不存在
+                data.homework_conflict="提交成功!"
+                data.homework_conflict=0 #没有发生冲突
+                homework_file.save(file_path)
+                homework[flag]["homework"][index]["filename"]=file_name # 如果当前没有发生冲突则增加
 
         if request.form.get('compress') == "yes":
             file_encode(file_path)
 
+        with open('./static/data/homework.json', "w", encoding="utf-8") as fp:#最后重新写入
+            json.dump(homework, fp, ensure_ascii=False, separators=('\n,', ':'))
         return redirect("/direct_course/" + data.coursename + "/")
 
 

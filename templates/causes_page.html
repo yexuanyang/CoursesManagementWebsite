@@ -11,7 +11,7 @@
 </head>
 
 <body>
-    <a href="" class="a-back-index"><i class="layui-icon layui-icon-return" style="font-size: 50px; position:absolute; top:3px; left:3px;"></i></a>
+    <a class="a-back-index" href="javascript:history.back(-1)"><i class="layui-icon layui-icon-return" style="font-size: 50px; position:absolute; top:3px; left:3px;"></i></a>
     <div class="cause_container">
         <div class="card1">
             <div class="causes-item">
@@ -34,7 +34,7 @@
                             <a href="javascript:void(0)" onclick="displayWindow()" class="layui-btn onload-btn">上传资料</a>
                             <div id="window" class="window_css">
                                 <a href="javascript:void(0)" onclick="hideWindow()" class="close-btn"><i class="layui-icon layui-icon-close close-item"style="font-size: 30px; color: #1E9FFF;"></i></a>
-                                <form action="/direct_course/materials/" method="post" enctype="multipart/form-data" class="form-file layui-form">
+                                <form action="/direct_course/materials/{{ post.cause_name }}" method="post" enctype="multipart/form-data" class="form-file layui-form">
                                     <span class="easy-text">选择资料：</span><input type="file" name="course-file" value="文件上传" class="file-upload-btn">
                                     <br>
                                     <div class="layui-input-block choice-block">
@@ -50,71 +50,55 @@
                                 <thead>
                                     <tr>
                                         <th lay-data="{field: 'name', width:150,sort:true} ">资料名称</th>
-                                        <th lay-data="{field: 'time', width:100, sort:true} ">时间</th>
                                         <th lay-data="{field: 'download'} ">下载</th>
                                         <th lay-data="{field: 'delete'} ">删除</th>
                                         <th lay-data="{field: 'description',width:1000}">描述</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                {% for i in range(1,1+mat_length) %}
                                     <tr>
-                                        <td>1.bmp</td>
-                                        <td>2022-4-15</td>
+                                        <td>{{ mat["material_name"][i-1] }}</td>
                                         <td><a href="" class="download-tag">下载</a></td>
                                         <td><a href="" class="delete-tag">删除</a></td>
-                                        <td>用于测试的文件1</td>
+                                        <td>资料{{ mat["material_name"][i-1] }}</td>
                                     </tr>
-                                    <tr>
-                                        <td>2.bmp</td>
-                                        <td>2022-4-16</td>
-                                        <td><a href="" class="download-tag">下载</a></td>
-                                        <td><a href="" class="delete-tag">删除</a></td>
-                                        <td>用于测试的文件2</td>
-                                    </tr>
-                                    <tr>
-                                        <td>3.bmp</td>
-                                        <td>2022-4-16</td>
-                                        <td><a href="" class="download-tag">下载</a></td>
-                                        <td><a href="" class="delete-tag">删除</a></td>
-                                        <td>用于测试的文件3</td>
-                                    </tr>
+                                {% endfor %}
                                 </tbody>
                             </table>
                         </div>
                     </div>
                     <div class="layui-tab-item">
                         <div class="layui-collapse" style="margin-top: 10px;">
-                            <div class="layui-colla-item">
-                                <h2 class="layui-colla-title">第一次作业</h2>
-                                <div class="layui-colla-content layui-show">
-                                    <a href="javascript:void(0)" onclick="displayWindow1()" class="layui-btn onload-btn">上传作业</a></div>
-                                <div id="window1" class="window_css">
+                            <div id="window1" class="window_css">
                                     <a href="javascript:void(0)" onclick="hideWindow1()" class="close-btn"><i class="layui-icon layui-icon-close close-item"style="font-size: 30px; color: #1E9FFF;"></i></a>
-                                    <form action="" method="post" enctype="multipart/form-data" class="form-file layui-form">
-                                        <span class="easy-text">选择资料：</span><input type="file" name="course-file" value="文件上传" class="file-upload-btn">
+                                    <form action="/direct_course/homework/" method="post" enctype="multipart/form-data" class="form-file layui-form">
+                                        <span class="easy-text">选择资料：</span><input type="file" name="course-homework" value="文件上传" class="file-upload-btn">
                                         <br>
                                         <div class="layui-input-block choice-block">
                                             <input type="radio" name="compress" value="yes" title="压缩">
                                             <input type="radio" name="compress" value="no" title="不压缩" checked>
                                             <input type="radio" name="compress" value="notkown" title="不知道" disabled>
                                         </div>
+                                        选择您提交的作业
+                                    <select name="homeworkoption" lay-verify="">
+                                        {% for i in range(1,1+hw_length) %}
+                                            <option value="{{ i-1 }}" >第{{ i }}次作业</option>
+                                        {% endfor %}
+                                    </select>
                                         <button type="submit" class="layui-btn form-submit-btn">提交</button>
                                     </form>
                                 </div>
+                            {% for i in range(1,1+hw_length) %}
+                            <div class="layui-colla-item">
+                                <h2 class="layui-colla-title">第{{ i }}次作业</h2>
+                                <div class="layui-colla-content layui-show">
+                                    <div class="homework_content">{{ hw["homework"][i-1]["content"] }}</div>
+                                                                    <hr>
+                                    <a href="javascript:void(0)" onclick="displayWindow1()" class="layui-btn onload-btn">上传作业</a></div>
                                 <div id="shadow1" class="shadow_css"></div>
                             </div>
-                            <div class="layui-colla-item">
-                                <h2 class="layui-colla-title">第二次作业</h2>
-                                <div class="layui-colla-content layui-show">
-                                    <a href="javascript:void(0)" onclick="displayWindow1()" class="layui-btn onload-btn">上传作业</a>
-                                </div>
-                            </div>
-                            <div class="layui-colla-item">
-                                <h2 class="layui-colla-title">第三次作业</h2>
-                                <div class="layui-colla-content layui-show">
-                                    <a href="javascript:void(0)" onclick="displayWindow1()" class="layui-btn onload-btn">上传作业</a>
-                                </div>
-                            </div>
+                            {% endfor %}
                         </div>
                     </div>
                     <div class="layui-tab-item">
@@ -122,20 +106,13 @@
                             <thead>
                                 <tr>
                                     <th lay-data="{field: 'name', width:100,sort:true} ">考试名称</th>
-                                    <th lay-data="{field: 'time', width:150, sort:true} ">考试时间</th>
-                                    <th lay-data="{field: 'download'} ">考试地点</th>
+                                    <th lay-data="{field: 'time',  sort:true} ">考试时间</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>期中考试</td>
-                                    <td>2022-4-15 13:30-15:30</td>
-                                    <td>S105</td>
-                                </tr>
-                                <tr>
                                     <td>期末考试</td>
-                                    <td>2022-6-25 14:30-16:30</td>
-                                    <td>S106</td>
+                                    <td>{{ post.exam_time }}</td>
                                 </tr>
                             </tbody>
                         </table>

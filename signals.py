@@ -9,6 +9,12 @@ class DataStore:
     coursename = ""
     upload_path = ""
     time_list = [2022, 5, 16, 1, 10, 0, 0]
+    homework_name=[]
+    material_name=[]
+    homework_conflict=0 #0代表没有冲突 1代表发生了冲突
+    material_conflict=0 #代表材料的冲突
+    homework_note="" #提示信息 如果提交成功则赋值成为”提交成功“ 否则 赋值为"file_name+"与后台提交的文件名重复，提交失败"
+    material_note="" #提示信息 类似上面
 
 
 data = DataStore()

@@ -765,6 +765,8 @@ def direct_course(course):
     flag1 = -1  # 不存在课程资料
     flag2 = -1  # 不存在作业
     # flag3 = -1  # 不存在考试
+    homework_length=0 #作业的个数
+    material_length=0 #资料的个数
     post = None
     for a in courses:
         if a.get("cause_name") == course:
@@ -780,8 +782,10 @@ def direct_course(course):
                 break
         if flag1 == -1:  # 如果其不存在
             material = None
+            material_length=0
         else:  # 如果存在的话
             material = courses_material[flag1]
+            material_length = len(material["material_name"])
 
         for j in range(0, len(homework)): #这里获得的大小
             if homework[j]["coursename"] == course:
@@ -789,12 +793,10 @@ def direct_course(course):
                 break
         if flag2 == -1:  # 如果不存在
             homework1 = None
+            homework_length=0
         else:  # 如果存在
             homework1 = homework[flag2]
-        homework_length=len(homework1["homework"])
-        material_length=len(material["material_name"])
-        print(post)
-        print(material)
+            homework_length = len(homework1["homework"])
         return render_template("causes_page.html", post=post, mat=material, hw=homework1,hw_length=homework_length,mat_length=material_length)
 
 '''

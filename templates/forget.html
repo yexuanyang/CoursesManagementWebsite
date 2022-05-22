@@ -21,4 +21,14 @@
     </div>
 </form>
 <!-- form -->
+    {% if error_in_password == True %}
+        <script>alert("密码输入不一致");</script>
+    {% endif %}
+    {% if no_found == True %}
+        <script>alert("账号不存在");</script>
+    {% endif %}
+    {% if level_error == True %}
+        <script>alert("权限不足");</script>
+    {% endif %}
+
 {% endblock %}

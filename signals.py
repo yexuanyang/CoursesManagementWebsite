@@ -4,6 +4,15 @@
 from flask import request, g
 from blinker import Namespace
 
+
+class DataStore:
+    coursename = ""
+    upload_path = ""
+    time_list = [2022, 5, 16, 1, 10, 0, 0]
+
+
+data = DataStore()
+
 space = Namespace()  # 创建命名空间
 # 用户登录信号
 login_space = space.signal('登录')
@@ -33,64 +42,75 @@ out_activity_sort = space.signal('对课外活动进行了排序')
 # 用户进入导航系统信号
 route_in = space.signal('进入了导航系统')
 # 用户导航系统进行路径规划信号
-route_in = space.signal('进行了路线规划')
+route_in_path = space.signal('进行了路线规划')
 
 # 用户进入日志系统信号
 logging_in = space.signal('访问了日志系统')
+
+intoch = {1: '一', 2: '二', 3: '三', 4: '四', 5: '五', 6: '六', 0: '日'}
 
 
 def logging_into(sender):  # 访问日志系统信号
     info = f'{g.uname}访问了日志系统'
     with open('logging.log', 'a', encoding='utf-8') as f:  # 打开日志文件然后写入
-        f.write(info + "\n")  # 写入日志信息
+        f.write(
+            f'{data.time_list[0]}-{data.time_list[1]}-{data.time_list[2]} 星期{intoch[int(data.time_list[3])]} {data.time_list[4]}:{data.time_list[5]}:{data.time_list[6]}\t' + info + "\n")  # 写入日志信息
 
 
 def login_space_into(sender):  # 登录信号
     info = f'{g.uname}登录了系统'
     with open('logging.log', 'a', encoding='utf-8') as f:  # 打开日志然后写如
-        f.write(info + "\n")  # 写入日志信息
+        f.write(
+            f'{data.time_list[0]}-{data.time_list[1]}-{data.time_list[2]} 星期{intoch[int(data.time_list[3])]} {data.time_list[4]}:{data.time_list[5]}:{data.time_list[6]}\t' + info + "\n")  # 写入日志信息
 
 
 def in_course_into(sender):
     info = f'{g.uname}进入了课程管理系统'
     with open('logging.log', 'a', encoding='utf-8') as f:  # 打开日志然后写如
-        f.write(info + "\n")  # 写入日志信息
+        f.write(
+            f'{data.time_list[0]}-{data.time_list[1]}-{data.time_list[2]} 星期{intoch[int(data.time_list[3])]} {data.time_list[4]}:{data.time_list[5]}:{data.time_list[6]}\t' + info + "\n")  # 写入日志信息
 
 
 def in_course_add_into(sender):
     info = f'{g.uname}增加了课程'
     with open('logging.log', 'a', encoding='utf-8') as f:  # 打开日志然后写如
-        f.write(info + "\n")  # 写入日志信息
+        f.write(
+            f'{data.time_list[0]}-{data.time_list[1]}-{data.time_list[2]} 星期{intoch[int(data.time_list[3])]} {data.time_list[4]}:{data.time_list[5]}:{data.time_list[6]}\t' + info + "\n")  # 写入日志信息
 
 
 def in_course_delete_into(sender):
     info = f'{g.uname}删除了课程'
     with open('logging.log', 'a', encoding='utf-8') as f:  # 打开日志然后写如
-        f.write(info + "\n")  # 写入日志信息
+        f.write(
+            f'{data.time_list[0]}-{data.time_list[1]}-{data.time_list[2]} 星期{intoch[int(data.time_list[3])]} {data.time_list[4]}:{data.time_list[5]}:{data.time_list[6]}\t' + info + "\n")  # 写入日志信息
 
 
 def in_course_change_into(sender):
     info = f'{g.uname}更新了课程'
     with open('logging.log', 'a', encoding='utf-8') as f:  # 打开日志然后写如
-        f.write(info + "\n")  # 写入日志信息
+        f.write(
+            f'{data.time_list[0]}-{data.time_list[1]}-{data.time_list[2]} 星期{intoch[int(data.time_list[3])]} {data.time_list[4]}:{data.time_list[5]}:{data.time_list[6]}\t' + info + "\n")  # 写入日志信息
 
 
 def out_activity_into(sender):
     info = f'{g.uname}进入了课外管理系统'
     with open('logging.log', 'a', encoding='utf-8') as f:  # 打开日志然后写如
-        f.write(info + "\n")  # 写入日志信息
+        f.write(
+            f'{data.time_list[0]}-{data.time_list[1]}-{data.time_list[2]} 星期{intoch[int(data.time_list[3])]} {data.time_list[4]}:{data.time_list[5]}:{data.time_list[6]}\t' + info + "\n")  # 写入日志信息
 
 
 def out_activity_set_into(sender):
     info = f'{g.uname}设置了课外活动'
     with open('logging.log', 'a', encoding='utf-8') as f:  # 打开日志然后写如
-        f.write(info + "\n")  # 写入日志信息
+        f.write(
+            f'{data.time_list[0]}-{data.time_list[1]}-{data.time_list[2]} 星期{intoch[int(data.time_list[3])]} {data.time_list[4]}:{data.time_list[5]}:{data.time_list[6]}\t' + info + "\n")  # 写入日志信息
 
 
 def route_in_into(sender):
     info = f'{g.uname}进入了导航系统'
     with open('logging.log', 'a', encoding='utf-8') as f:  # 打开日志然后写如
-        f.write(info + "\n")  # 写入日志信息
+        f.write(
+            f'{data.time_list[0]}-{data.time_list[1]}-{data.time_list[2]} 星期{intoch[int(data.time_list[3])]} {data.time_list[4]}:{data.time_list[5]}:{data.time_list[6]}\t' + info + "\n")  # 写入日志信息
 
 
 logging_in.connect(logging_into)  # 注册这个日志信号

@@ -20,4 +20,14 @@
     </div>
 </form>
 <!-- form -->
+    {% if error_in_password == True %}
+        <script>
+            alert("密码输入不一致");
+        </script>
+    {% endif %}
+
+    {% if have_already == True %}
+        <script>alert("账号已存在");</script>
+    {% endif %}
+
 {% endblock %}

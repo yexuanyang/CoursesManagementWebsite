@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, g, session
+from flask import Flask, render_template, request, redirect, g, session,send_from_directory
 from compress import file_decode  # 解码函数
 from compress import file_encode  # 编码函数
 import os
@@ -7,7 +7,7 @@ import json
 import datetime
 from werkzeug.utils import secure_filename
 from signals import logging_in, login_space, in_course, route_in, out_activity, in_course_add, in_course_delete, \
-    in_course_change, out_activity_set, data,DataStore
+    in_course_change, out_activity_set, data,DataStore,direct_course_go,add_homework
 from forms import OutCourseForms, InCourseForms
 app = Flask(__name__)
 
@@ -218,19 +218,16 @@ def forget():
 # 学生课程信息管理首页
 @app.route('/index/admin')
 def admin_index():
-    global time_list
     return render_template('admin_new.html', cla1='active', time_que=data.time_list)
 
 
 @app.route('/index/student')
 def student_index():
-    global time_list
     return render_template('student_index.html', cla1='active', time_que=data.time_list)
 
 
 @app.route('/in_course/student', methods=['POST', 'GET'])
 def in_course_fun_stu():
-    global time_list
     g.uname = session.get('now_user')
     in_course.send()
     return render_template('student_course.html', cla2='active', posts=courses, time_que=data.time_list)
@@ -238,7 +235,6 @@ def in_course_fun_stu():
 
 @app.route('/in_course/admin', methods=['POST', 'GET'])
 def in_course_fun():
-    global time_list
     g.uname = session.get('now_user')
     in_course.send()
     return render_template('student_course_admin.html', cla2='active', posts=courses, time_que=data.time_list)
@@ -309,7 +305,6 @@ def in_course_delete_fun():
 
 @app.route('/in_course/admin/change', methods=['POST', 'GET'])
 def in_course_change_fun():
-    global time_list
     form = InCourseForms()
     id1 = request.args.get('id1')
     cause_name = request.args.get('cause_name')
@@ -371,7 +366,6 @@ def in_course_change_fun():
 
 @app.route('/out_course/admin', methods=['POST', 'GET'])
 def out_course_fun():
-    global time_list
     g.uname = session.get('now_user')
     out_activity.send()
     return render_template('student_out_course_admin.html', cla3='active', posts=out_courses, time_que=data.time_list)
@@ -384,7 +378,6 @@ def out_course_add_fun():
     conflict_in_course = False
     conflict_which_course = {}
     form = OutCourseForms()
-    global time_list
 
     if request.method == 'POST':
         g.uname = session.get('now_user')
@@ -530,10 +523,9 @@ def out_course_change_fun():
 
 @app.route('/out_course/student', methods=['POST', 'GET'])
 def out_course_fun_stu():
-    global time_list
     g.uname = session.get('now_user')
     out_activity.send()
-    return render_template('student_out_course.html', cla3='active', posts=out_courses, time_que=time_list)
+    return render_template('student_out_course.html', cla3='active', posts=out_courses, time_que=data.time_list)
 
 
 @app.route('/out_course/student/add', methods=['POST', 'GET'])
@@ -756,6 +748,13 @@ def logging_fun():
 
 @app.route('/direct_course/<course>/')
 def direct_course(course):
+    display="" #init
+    g.uname=session.get('now_user')
+    if g.uname=="master":
+        display="block"
+    else:
+        display="none"
+    direct_course_go.send()
     global homework
     global coursename
     material = None
@@ -764,7 +763,6 @@ def direct_course(course):
     flag = -1
     flag1 = -1  # 不存在课程资料
     flag2 = -1  # 不存在作业
-    # flag3 = -1  # 不存在考试
     homework_length=0 #作业的个数
     material_length=0 #资料的个数
     post = None
@@ -797,7 +795,7 @@ def direct_course(course):
         else:  # 如果存在
             homework1 = homework[flag2]
             homework_length = len(homework1["homework"])
-        return render_template("causes_page.html", post=post, mat=material, hw=homework1,hw_length=homework_length,mat_length=material_length)
+        return render_template("causes_page.html", post=post, mat=material, hw=homework1,hw_length=homework_length,mat_length=material_length,ifdisplay=display)
 
 '''
 课程资料提交位置:
@@ -839,6 +837,23 @@ def materials_submit(coursename_temp):
             json.dump(courses_material, fp, ensure_ascii=False, separators=('\n,', ':'))
         return redirect("/direct_course/"+coursename_temp)
 
+@app.route('/course/download/',methods=['POST']) #实现下载的路由
+def download_material():
+    g.uname=session.get('now_user')
+    DOWNLOAD_PATH = os.path.join(os.path.dirname(__file__), data.coursename)  # 当前的文件路径
+    #得到文件名
+    download_name=request.form.get("downloadmaterial")
+    #将文件名拆分
+    downloadtmp=download_name.split(".") #以"."作为分割
+
+    #得到压缩的文件名
+    download_ys=downloadtmp[0]+".ys"
+    DOWNLOAD_PATH_YS=os.path.join(DOWNLOAD_PATH,download_ys) #将字符串进行连接
+    DOWNLOAD_PATH_NORMAL=os.path.join(DOWNLOAD_PATH,download_name)
+    if os.path.exists(DOWNLOAD_PATH): #如果当前存在这个压缩文件
+        return send_from_directory(path=DOWNLOAD_PATH_YS,directory=DOWNLOAD_PATH,filename=download_ys,as_attachment=True)
+    else:
+        return send_from_directory(path=DOWNLOAD_PATH_NORMAL,directory=DOWNLOAD_PATH,filename=download_name,as_attachement=True)
 
 '''
 作业提交位置：
@@ -857,7 +872,6 @@ def homework_submit(): #前端表单中多添加了一个元素，用于标志�
         filename = homework_file.filename
         file_name = secure_filename(filename)  # 文件名的安全转换
         index=int(request.form.get("homeworkoption"))#传递过来的提交第几次作业
-        print(index)
         Directory_path=os.path.join(UPLOAD_PATH,f"第{index+1}次作业")
         if not os.path.exists(Directory_path):
             os.mkdir(Directory_path) #如果不存在第i次作业这个文件夹则创建
@@ -888,12 +902,33 @@ def homework_submit(): #前端表单中多添加了一个元素，用于标志�
             json.dump(homework, fp, ensure_ascii=False, separators=('\n,', ':'))
         return redirect("/direct_course/" + data.coursename + "/")
 
+@app.route('/direct_course/homework/addhomework/',methods=['POST'])
+def addhomework():
+    '''添加作业'''
+    g.uname=session.get('now_user')
+    add_homework.send() #向日志写入信息
+    flag=-1 #用于判断是否存在当前课程的作业
+    temp={}
+
+    for i in range(0,len(homework)):
+        if data.coursename==homework[i]["coursename"]:
+            flag=i
+            break
+    if i==-1:#如果是-1的话就是证明没有找到 此时则向列表中添加
+        temp={"coursename":data.coursename}
+        homework.append(temp)
+    else:
+        homework[i]["homework"].append({"content":request.form.get("addhomework-content"),"filename":""})
+    with open('./static/data/homework.json', "w", encoding="utf-8") as fp:  # 最后重新写入
+        json.dump(homework, fp, ensure_ascii=False, separators=('\n,', ':'))
+    return redirect("/direct_course/" + data.coursename + "/")
 
 @app.route('/time_control', methods=['POST'])  # 用于控制时间 ，所有的时间系统都采用当前的操作
 def time_control():
     time = request.form.get('time')
     data.time_list = json.loads(time)  # 得到了时间列表
     return "time_yes"
+
 
 
 @app.route('/getData4JS', methods=['POST', 'GET'])

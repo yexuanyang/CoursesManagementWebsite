@@ -32,6 +32,7 @@
                     <div class="layui-tab-item layui-show">
                         <div class="file_for_causes">
                             <a href="javascript:void(0)" onclick="displayWindow()" class="layui-btn onload-btn">上传资料</a>
+                            <a href="javascript:void(0)" onclick="displaydownloadwindow()" class="layui-btn onload-btn">下载资料</a>
                             <div id="window" class="window_css">
                                 <a href="javascript:void(0)" onclick="hideWindow()" class="close-btn"><i class="layui-icon layui-icon-close close-item"style="font-size: 30px; color: #1E9FFF;"></i></a>
                                 <form action="/direct_course/materials/{{ post.cause_name }}" method="post" enctype="multipart/form-data" class="form-file layui-form">
@@ -46,12 +47,23 @@
                                 </form>
                             </div>
                             <div id="shadow" class="shadow_css"></div>
+                            <div id="download_window" class="window_css">
+                                <a href="javascript:void(0)" onclick="hideDownloadWindow()" class="close-btn"><i class="layui-icon layui-icon-close close-item"style="font-size: 30px; color: #1E9FFF;"></i></a>
+                                <form action="/course/download/" method="post" enctype="multipart/form-data" class="form-file layui-form">
+                                    选择您需要下载的资料：
+                                    <select name="downloadmaterial" lay-verify="">
+                                    {% for i in range(1,1+mat_length) %}
+                                        <option value="{{ mat["material_name"][i-1] }}" >{{ mat["material_name"][i-1] }}</option>
+                                    {% endfor %}
+                                    </select>
+                                    <button type="submit" class="layui-btn form-submit-btn">提交</button>
+                                </form>
+                            </div>
+                            <div id="Downloadshadow" class="shadow_css"></div>
                             <table lay-filter="demo" class="file-table" style="position: relative; top:20px;">
                                 <thead>
                                     <tr>
                                         <th lay-data="{field: 'name', width:150,sort:true} ">资料名称</th>
-                                        <th lay-data="{field: 'download'} ">下载</th>
-                                        <th lay-data="{field: 'delete'} ">删除</th>
                                         <th lay-data="{field: 'description',width:1000}">描述</th>
                                     </tr>
                                 </thead>
@@ -59,8 +71,6 @@
                                 {% for i in range(1,1+mat_length) %}
                                     <tr>
                                         <td>{{ mat["material_name"][i-1] }}</td>
-                                        <td><a href="" class="download-tag">下载</a></td>
-                                        <td><a href="" class="delete-tag">删除</a></td>
                                         <td>资料{{ mat["material_name"][i-1] }}</td>
                                     </tr>
                                 {% endfor %}
@@ -99,6 +109,17 @@
                                 <div id="shadow1" class="shadow_css"></div>
                             </div>
                             {% endfor %}
+                            <a type="button" href="javascript:void(0)" onclick="displayaddwindow()" class="layui-btn" id="add-tag" style="display: {{ ifdisplay }}; float: right; margin-right: 30px;">添加作业</a>
+                            <div id="addWindow" class="window_css">
+                                    <a href="javascript:void(0)" onclick="hideAddWindow()" class="close-btn"><i class="layui-icon layui-icon-close close-item"style="font-size: 30px; color: #1E9FFF;"></i></a>
+                                    <form action="/direct_course/homework/addhomework/" method="post" enctype="multipart/form-data" class="form-file layui-form">
+                                        <span id="title-tag">添加新的作业</span>
+{#                                        <span id="content-tag">输入您的作业内容</span>>#}
+                                        <textarea name="addhomework-content" required lay-verify="required" placeholder="请输入作业的内容" class="layui-textarea"></textarea>
+                                        <button type="submit" class="layui-btn form-submit-btn">提交</button>
+                                    </form>
+                                </div>
+                            <div id="addshadow" class="shadow_css"></div>
                         </div>
                     </div>
                     <div class="layui-tab-item">
@@ -155,6 +176,23 @@
         function hideWindow1() {
             document.getElementById("window1").style.display = "none";
             document.getElementById("shadow1").style.display = "none";
+        }
+
+        function displayaddwindow(){
+            document.getElementById("addWindow").style.display = "block";
+            document.getElementById("addshadow").style.display="block";
+        }
+        function hideAddWindow(){
+            document.getElementById("addWindow").style.display="none";
+            document.getElementById("addshadow").style.display="none";
+        }
+        function hideDownloadWindow(){
+            document.getElementById("download_window").style.display="none";
+            document.getElementById("Downloadshadow").style.display="none";
+        }
+        function displaydownloadwindow(){
+            document.getElementById("download_window").style.display="block";
+            document.getElementById("Downloadshadow").style.display="block";
         }
     </script>
 </body>

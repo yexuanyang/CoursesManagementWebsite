@@ -20,6 +20,10 @@ class DataStore:
 data = DataStore()
 
 space = Namespace()  # 创建命名空间
+#添加作业
+add_homework=space.signal("添加了作业")
+#进入了某个具体的课程页面
+direct_course_go=space.signal("进入了某个具体的课程页面")
 # 用户登录信号
 login_space = space.signal('登录')
 
@@ -55,6 +59,12 @@ logging_in = space.signal('访问了日志系统')
 
 intoch = {1: '一', 2: '二', 3: '三', 4: '四', 5: '五', 6: '六', 0: '日'}
 
+def addhomework_act(sender):
+    '''添加了作业'''
+    info=f"{g.uname}在{data.coursename}添加了新的作业"
+    with open('logging.log', 'a', encoding='utf-8') as f:  # 打开日志文件然后写入
+        f.write(
+            f'{data.time_list[0]}-{data.time_list[1]}-{data.time_list[2]} 星期{intoch[int(data.time_list[3])]} {data.time_list[4]}:{data.time_list[5]}:{data.time_list[6]}\t' + info + "\n")  # 写入日志信息
 
 def logging_into(sender):  # 访问日志系统信号
     info = f'{g.uname}访问了日志系统'
@@ -119,6 +129,12 @@ def route_in_into(sender):
             f'{data.time_list[0]}-{data.time_list[1]}-{data.time_list[2]} 星期{intoch[int(data.time_list[3])]} {data.time_list[4]}:{data.time_list[5]}:{data.time_list[6]}\t' + info + "\n")  # 写入日志信息
 
 
+def direct_course_go_to(sender):
+    info=f'{g.uname}访问了{data.coursename}课程'
+    with open('logging.log', 'a', encoding='utf-8') as f:  # 打开日志然后写如
+        f.write(
+            f'{data.time_list[0]}-{data.time_list[1]}-{data.time_list[2]} 星期{intoch[int(data.time_list[3])]} {data.time_list[4]}:{data.time_list[5]}:{data.time_list[6]}\t' + info + "\n")  # 写入日志信息
+
 logging_in.connect(logging_into)  # 注册这个日志信号
 login_space.connect(login_space_into)  # 注册信号
 in_course.connect(in_course_into)  # 进入了课内信息管理系统
@@ -128,3 +144,5 @@ in_course_change.connect(in_course_change_into)  # 更新了课程
 route_in.connect(route_in_into)  # 进入了导航系统
 out_activity.connect(out_activity_into)  # 进入了课外管理系统
 out_activity_set.connect(out_activity_set_into)  # 设置了课外活动
+direct_course_go.connect(direct_course_go_to) #进入了某个具体的课程
+add_homework.connect(addhomework_act)#添加了新的作业

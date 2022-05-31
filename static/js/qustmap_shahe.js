@@ -1,11 +1,14 @@
 //Dijkstra单源最短路径
 var PathToEnd = new Array(13);
-
+var ByBike=10; //通过自行车 10m/s
+var Onfootwalk=2;//通过走路 2m/s
 function dijkstra(path, index) {
     var m = path && path.length;
     var n = m && path[0].length;
     if (m && n && m === n && index < n) {
         //初始化distance
+        var randomNumber=Math.random();//随机拥挤度
+        console.log(randomNumber);
         var dis = [];
         var visited = []; //用于标识index号至其他顶点的距离是否确定
         for (var i = 0; i < n; ++i) {
@@ -157,19 +160,19 @@ for (var i = 0; i < pointName.length; ++i) {
 }
 
 //百度地图-MapV-API
-var map = new BMap.Map("container", {
+var map = new BMapGL.Map("container", {
     enableMapClick: false
 });
-var point = new BMap.Point(116.296167, 40.163412);
+var point = new BMapGL.Point(116.296167, 40.163412);
 map.centerAndZoom(point, 17);
 map.enableScrollWheelZoom(true); // 开启鼠标滚轮缩放
 
 //Marker标记
 var marker = new Array();
 for (var i = 0; i < pointName.length; ++i) {
-    var point = new BMap.Point(pointCord[i][0], pointCord[i][1]); //默认  可以通过Icon类来指定自定义图标
-    marker[i] = new BMap.Marker(point);
-    var label = new BMap.Label(pointName[i], { offset: new BMap.Size(20, -10) }); //标注标签
+    var point = new BMapGL.Point(pointCord[i][0], pointCord[i][1]); //默认  可以通过Icon类来指定自定义图标
+    marker[i] = new BMapGL.Marker(point);
+    var label = new BMapGL.Label(pointName[i], { offset: new BMapGL.Size(20, -10) }); //标注标签
     marker[i].setLabel(label) //设置标注说明
     map.addOverlay(marker[i]);
 }
@@ -177,62 +180,66 @@ var mapvLayer;
 
 function DisplayPath(StartIndex, EndIndex) {
     var data = [];
+    var animationtmp=[];
+    var animation=[]; //这是真是的animation 上面那个是倒着进行的操作
     var StartPoint = pointCord[StartIndex];
     var EndPoint = pointCord[EndIndex];
     console.log("StartPoint: " + StartPoint);
     console.log("EndPoint: " + EndPoint);
-
     //获取最短路径
     var p = EndIndex;
-    console.log(p);
+    EndPoint = pointCord[p];
+    animationtmp.push(
+        {
+            'lng':EndPoint[0],
+            'lat':EndPoint[1]
+        }
+        )
     while (PathToEnd[p] != -1) {
         StartPoint = pointCord[PathToEnd[p]];
-        EndPoint = pointCord[p];
-        data.push({
-            geometry: {
-                type: 'LineString',
-                coordinates: [
-                    StartPoint,
-                    EndPoint
-                ],
-            },
-            count: 30
-        });
-        console.log(PathToEnd[p]);
+        animationtmp.push(
+            {
+                'lng':StartPoint[0],
+                'lat':StartPoint[1]
+            }
+        );
         p = PathToEnd[p];
     }
     console.log(StartIndex);
     StartPoint = pointCord[StartIndex];
-    EndPoint = pointCord[p];
-    data.push({
-        geometry: {
-            type: 'LineString',
-            coordinates: [
-                StartPoint,
-                EndPoint
-            ],
-        },
-        count: 30
+    animation.push(
+            {
+                'lng':StartPoint[0],
+                'lat':StartPoint[1]
+            }
+        );
+    for(var i=animationtmp.length-1;i>=0;i--){
+        animation.push(animationtmp[i]);
+    }
+    var animationpoint=[];
+    for(var i=0;i<animation.length;i++){
+        animationpoint.push(new BMapGL.Point(animation[i].lng,animation[i].lat));
+    }
+    console.log(animationpoint);
+    var pl=new BMapGL.Polyline(animationpoint);
+    var trackAni=null;
+    if(trackAni==null){ //如果不存在则创建新的
+        trackAni=new BMapGLLib.TrackAnimation(map, pl, {
+        overallView: true, // 动画完成后自动调整视野到总览
+        tilt: 30,          // 轨迹播放的角度，默认为55
+        duration: 4000,   // 动画持续时长，默认为10000，单位ms
+        delay: 0        // 动画开始的延迟，默认0，单位ms
     });
-
-    var dataSet = new mapv.DataSet(data);
-    var options = {
-        strokeStyle: 'rgba(53,57,255,0.5)',
-        globalCompositeOperation: 'lighter',
-        shadowColor: 'rgba(53,57,255,0.2)',
-        shadowBlur: 3,
-        lineWidth: 3.0,
-        draw: 'simple',
-        fillStyle: 'rgba(255, 50, 50, 0.6)'
+    }else{
+        trackAni=null;//如果存在则隐藏 然后创建新的
+        trackAni=new BMapGLLib.TrackAnimation(map, pl, {
+        overallView: true, // 动画完成后自动调整视野到总览
+        tilt: 30,          // 轨迹播放的角度，默认为55
+        duration: 4000,   // 动画持续时长，默认为10000，单位ms
+        delay: 0        // 动画开始的延迟，默认0，单位ms
+    });
     }
-    if (mapvLayer == null) {
-        mapvLayer = new mapv.baiduMapLayer(map, dataSet, options);
-    } else {
-        //先清除上一个图层
-        mapvLayer.hide();
-        mapvLayer = new mapv.baiduMapLayer(map, dataSet, options);
-    }
-
+    trackAni.start();
 }
 
 var button = document.getElementById("button");
@@ -260,8 +267,10 @@ button.addEventListener("click", function() {
     DisplayPath(StartIndex, EndIndex);
     console.log(PathToEnd);
     //将最短路径的距离在页面上展示出来
+    var timebybike=parseInt((PathArray[EndIndex]/ByBike)/60);//得到的结果是骑自行车用时
+    var timeonfoot=parseInt((PathArray[EndIndex]/Onfootwalk)/60);//步行所用的时间
     document.getElementById("showdis").style.bottom = "5%";
-    document.getElementById("showdis").innerHTML = "当前路径的距离为：" + PathArray[EndIndex].toString() + "米";
+    document.getElementById("showdis").innerHTML = "当前路径的距离为：" + PathArray[EndIndex].toString() + "米"+"<br>"+"步行所用的时间为："+timeonfoot+"分钟"+"<br>"+"自行车所用的时间为："+timebybike+"分钟";
 });
 
 var button2 = document.getElementById("warninginfo");

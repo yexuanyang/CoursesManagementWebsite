@@ -1,3 +1,19 @@
+var MonthTable=[
+    [0,0],
+    [31,31],
+    [28,29],
+    [31,31],
+    [30,30],
+    [31,31],
+    [30,30],
+    [31,31],
+    [31,31],
+    [30,30],
+    [31,31],
+    [30,30],
+    [31,31]
+];
+var requestcount=0; //用于降低频率
 // 用于模拟系统时间
 var t = null; //这里是执行时间的函数
 var multiple = 3; //这里是加速的倍数
@@ -275,9 +291,8 @@ function faketime() {
         }
 
     }
-
-
-    var time_json = {
+    if(requestcount==0){
+            var time_json = {
         time: JSON.stringify(data_list)
     };
     $.ajax({
@@ -289,6 +304,13 @@ function faketime() {
             console.log("")
         }
     });
+    requestcount++;
+    }else{
+        requestcount++;
+        if(requestcount==100){ //每100次变化进行一次请求发送
+            requestcount=0;
+        }
+    }
     draw();
 }
 /*
@@ -309,9 +331,8 @@ function pause_fun() { //用于停止时间
 }
 
 function act() {
-    if (t > 0) {
+        clearInterval(t);//先清除定时器
         t = setInterval(faketime, timeset)
-    }
 }
 
 function bequicker() {
@@ -473,21 +494,6 @@ function route_organization() {
     }
 }
 //记录平年和闰年每个月的日期
-var MonthTable=[
-    [0,0],
-    [31,31],
-    [28,29],
-    [31,31],
-    [30,30],
-    [31,31],
-    [30,30],
-    [31,31],
-    [31,31],
-    [30,30],
-    [31,31],
-    [30,30],
-    [31,31]
-];
 //var data_list = [Y,MONTH,DAY,W,H, min, second]; 定义
 console("MONTH:"+MONTH);
 function dateplie(){ //用于日期的自增
@@ -505,7 +511,7 @@ function dateplie(){ //用于日期的自增
     else{
         f=0;
     }
-    if(parseInt(DAY)===MonthTable[MONTH][f]){ //如果达到当月的最后一天
+    if(parseInt(DAY)===MonthTable[parseInt(MONTH)][f]){ //如果达到当月的最后一天
         DAY=1;
         if(MONTH==12){ //如果到达12月份
             Y++;//到达下一个年份

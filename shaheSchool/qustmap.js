@@ -10,7 +10,7 @@ function dijkstra(path, index) {
         var visited = []; //用于标识index号至其他顶点的距离是否确定
         for (var i = 0; i < n; ++i) {
             dis.push(path[index][i]);
-            visited.push(false)
+            visited.push(false);
             PathToEnd[i] = -1;
         }
         visited[index] = true;
@@ -138,6 +138,8 @@ var path = [
     [INF, INF, INF, INF, INF, INF, INF, INF, INF, INF, INF, INF, INF, INF, INF, INF, INF, INF, INF, INF, INF, 450, INF, INF, INF, INF, 200, 0, 450],
     [INF, INF, INF, INF, INF, INF, INF, INF, INF, INF, INF, INF, INF, INF, INF, INF, INF, INF, 250, INF, INF, 200, INF, INF, INF, INF, 450, 450, 0],
 ];
+//拥挤度 接下来将随机生成拥挤度进行路线的规划
+
 
 //给select添加选项text
 function addSelect(id, text) {
@@ -165,6 +167,7 @@ map.centerAndZoom(point, 17);
 map.enableScrollWheelZoom(true); // 开启鼠标滚轮缩放
 
 //Marker标记
+//给每个点设置标注
 var marker = new Array();
 for (var i = 0; i < pointName.length; ++i) {
     var point = new BMap.Point(pointCord[i][0], pointCord[i][1]); //默认  可以通过Icon类来指定自定义图标
@@ -177,6 +180,7 @@ var mapvLayer;
 
 function DisplayPath(StartIndex, EndIndex) {
     var data = [];
+    var animation=[];
     var StartPoint = pointCord[StartIndex];
     var EndPoint = pointCord[EndIndex];
     console.log("StartPoint: " + StartPoint);
@@ -198,40 +202,76 @@ function DisplayPath(StartIndex, EndIndex) {
             },
             count: 30
         });
+        animation.push(
+            {
+                'lng':StartPoint[0],
+                'lat':StartPoint[1]
+            }
+        );
+        animation.push(
+            {
+                'lng':EndPoint[0],
+                'lat':EndPoint[1]
+            }
+        );
         console.log(PathToEnd[p]);
         p = PathToEnd[p];
     }
     console.log(StartIndex);
     StartPoint = pointCord[StartIndex];
     EndPoint = pointCord[p];
-    data.push({
-        geometry: {
-            type: 'LineString',
-            coordinates: [
-                StartPoint,
-                EndPoint
-            ],
-        },
-        count: 30
+    // data.push({
+    //     geometry: {
+    //         type: 'LineString',
+    //         coordinates: [
+    //             StartPoint,
+    //             EndPoint
+    //         ],
+    //     },
+    //     count: 30
+    // });
+    animation.push(
+        {
+            'lng':StartPoint[0],
+            'lat':StartPoint[1]
+        }
+        );
+    animation.push(
+        {
+            'lng':EndPoint[0],
+            'lat':EndPoint[1]
+        }
+        );
+    var animationpoint=[];
+    for(var i=0;i<animation.length;i++){
+        animationpoint.push(new BMapGL.Point(animation[i].lng,animation[i].lat));
+    }
+    var pl=new BMapGL.Polyline(animationpoint);
+    var trackAni=new BMapGLLib.TrackAnimation(map, pl, {
+        overallView: true, // 动画完成后自动调整视野到总览
+        tilt: 30,          // 轨迹播放的角度，默认为55
+        duration: 20000,   // 动画持续时长，默认为10000，单位ms
+        delay: 3000        // 动画开始的延迟，默认0，单位ms
     });
-
-    var dataSet = new mapv.DataSet(data);
-    var options = {
-        strokeStyle: 'rgba(53,57,255,0.5)',
-        globalCompositeOperation: 'lighter',
-        shadowColor: 'rgba(53,57,255,0.2)',
-        shadowBlur: 3,
-        lineWidth: 3.0,
-        draw: 'simple',
-        fillStyle: 'rgba(255, 50, 50, 0.6)'
-    }
-    if (mapvLayer == null) {
-        mapvLayer = new mapv.baiduMapLayer(map, dataSet, options);
-    } else {
-        //先清除上一个图层
-        mapvLayer.hide();
-        mapvLayer = new mapv.baiduMapLayer(map, dataSet, options);
-    }
+    console.log("animation yes!")
+    trackAni.start();
+    // var dataSet = new mapv.DataSet(data);
+    // var options = {
+    //     strokeStyle: 'rgba(53,57,255,0.5)',
+    //     globalCompositeOperation: 'lighter',
+    //     shadowColor: 'rgba(53,57,255,0.2)',
+    //     shadowBlur: 3,
+    //     lineWidth: 3.0,
+    //     draw: 'simple',
+    //     fillStyle: 'rgba(255, 50, 50, 0.6)'
+    // }
+    // if (mapvLayer == null) {
+    //     mapvLayer = new mapv.baiduMapLayer(map, dataSet, options);
+    // } else {
+    //     //先清除上一个图层
+    //     mapvLayer.hide();
+    //     mapvLayer = new mapv.baiduMapLayer(map, dataSet, options);
+    // }
 
 }
 

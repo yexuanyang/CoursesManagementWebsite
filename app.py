@@ -850,10 +850,13 @@ def download_material():
     download_ys=downloadtmp[0]+".ys"
     DOWNLOAD_PATH_YS=os.path.join(DOWNLOAD_PATH,download_ys) #将字符串进行连接
     DOWNLOAD_PATH_NORMAL=os.path.join(DOWNLOAD_PATH,download_name)
-    if os.path.exists(DOWNLOAD_PATH): #如果当前存在这个压缩文件
+    print("exists")
+    print(os.path.exists(DOWNLOAD_PATH_YS))
+    if os.path.exists(DOWNLOAD_PATH_YS): #如果当前存在这个压缩文件
         return send_from_directory(path=DOWNLOAD_PATH_YS,directory=DOWNLOAD_PATH,filename=download_ys,as_attachment=True)
     else:
-        return send_from_directory(path=DOWNLOAD_PATH_NORMAL,directory=DOWNLOAD_PATH,filename=download_name,as_attachement=True)
+        print(DOWNLOAD_PATH_YS)
+        return send_from_directory(path=DOWNLOAD_PATH_NORMAL,directory=DOWNLOAD_PATH,filename=download_name,as_attachment=True)
 
 '''
 作业提交位置：

@@ -11,7 +11,12 @@
 </head>
 
 <body>
-    <a class="a-back-index" href="javascript:history.back(-1)"><i class="layui-icon layui-icon-return" style="font-size: 50px; position:absolute; top:3px; left:3px;"></i></a>
+    {% if back=="master" %}
+    <a class="a-back-index" href="/in_course/admin"><i class="layui-icon layui-icon-return" style="font-size: 50px; position:absolute; top:3px; left:3px;"></i></a>
+    {% else %}
+    <a class="a-back-index" href="/in_course/student"><i class="layui-icon layui-icon-return" style="font-size: 50px; position:absolute; top:3px; left:3px;"></i></a>
+    {% endif %}
+    <div class="layui-anim layui-anim-scale">
     <div class="cause_container">
         <div class="card1">
             <div class="causes-item">
@@ -142,6 +147,9 @@
             </div>
         </div>
     </div>
+
+    </div>
+
     <script src="/static/layui/layui.js "></script>
     <script>
         var table = layui.table;
@@ -194,6 +202,11 @@
             document.getElementById("download_window").style.display="block";
             document.getElementById("Downloadshadow").style.display="block";
         }
+        {% if con==1 %}
+        alert("您提交的资料文件名重复，请重新提交")
+        {% elif con==2 %}
+        alert("您提交的作业文件名重复，请重新提交")
+        {% endif %}
     </script>
 </body>
 

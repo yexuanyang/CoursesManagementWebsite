@@ -10,7 +10,9 @@ sys.setrecursionlimit(1000000)	  #python默认的递归深度有限，约900多�
 # node_dict: key 不重复的字节 val 对应的结点
 # bytes_dict: key 不重复的字节 val 对应的编码
 # nodes : 保存结点并构建树，构建完后只剩下根结点
-
+class datatmp:
+    decodeFile="" #解压之后的文件名
+datatemp=datatmp()
 #哈夫曼树结点的类定义
 class node(object):
     def __init__(self,value=None,left=None,right=None,father=None):
@@ -151,6 +153,7 @@ def file_decode(input_file):
         path_list = input_file.split('.')
         name = f_in.readline().decode(encoding="UTF-8").split('/')[-1].replace('\n','')
         name = name.split('.')[-1]                   #读出文件名
+        datatemp.decodeFile=name #得到文件名
         with open(path_list[0]+'.'+name,'wb') as f_out:
             n=int.from_bytes(f_in.read(2), byteorder = 'big')     #读出结点数量
             width=int.from_bytes(f_in.read(1), byteorder = 'big') #读出位宽

@@ -11,11 +11,15 @@ class DataStore:
     time_list = [2022, 5, 16, 1, 10, 0, 0]
     homework_name=[]
     material_name=[]
-    homework_conflict=0 #0代表没有冲突 1代表发生了冲突
-    material_conflict=0 #代表材料的冲突
-    homework_note="" #提示信息 如果提交成功则赋值成为”提交成功“ 否则 赋值为"file_name+"与后台提交的文件名重复，提交失败"
-    material_note="" #提示信息 类似上面
-
+    homework_conflict=-1 #0代表没有冲突 1代表发生了冲突
+    material_conflict=-1 #代表材料的冲突 -1代表两种情况都没有发生
+    # homework_note="" #提示信息 如果提交成功则赋值成为”提交成功“ 否则 赋值为"file_name+"与后台提交的文件名重复，提交失败"
+    # material_note="" #提示信息 类似上面
+    download_material_name=""; #下载的资料名称
+    upload_material_name=""#上传的课程资料名称
+    def initconflict(self): #初始化所有的变量 方便进行下一次操作
+        self.homework_conflict= -1#没有发生冲突
+        self.material_conflict=-1
 
 data = DataStore()
 
@@ -57,8 +61,14 @@ route_in_path = space.signal('进行了路线规划')
 # 用户进入日志系统信号
 logging_in = space.signal('访问了日志系统')
 
-intoch = {1: '一', 2: '二', 3: '三', 4: '四', 5: '五', 6: '六', 0: '日'}
+#上传课程资料
+upload_material_signal=space.signal("上传了课程资料")
+#下载课程资料
+download_material_signal=space.signal("下载了课程资料")
+#提交课程作业
+upload_homework_signal=space.signal("提交了课程作业")
 
+intoch = {1: '一', 2: '二', 3: '三', 4: '四', 5: '五', 6: '六', 0: '日'}
 def addhomework_act(sender):
     '''添加了作业'''
     info=f"{g.uname}在{data.coursename}添加了新的作业"
@@ -135,13 +145,21 @@ def direct_course_go_to(sender):
         f.write(
             f'{data.time_list[0]}-{data.time_list[1]}-{data.time_list[2]} 星期{intoch[int(data.time_list[3])]} {data.time_list[4]}:{data.time_list[5]}:{data.time_list[6]}\t' + info + "\n")  # 写入日志信息
 
-def delete_course(sender):
-    info=f'{g.uname}删除了课程'
+def put_in_homework(sender): #提交课程作业
+    info=f'{g.uname}提交了{data.coursename}课程作业'
     with open('logging.log', 'a', encoding='utf-8') as f:  # 打开日志然后写如
         f.write(f'{data.time_list[0]}-{data.time_list[1]}-{data.time_list[2]} 星期{intoch[int(data.time_list[3])]} {data.time_list[4]}:{data.time_list[5]}:{data.time_list[6]}\t' + info + "\n")  # 写入日志信息
 
-def add_course(sender):
-    info=f'{g.uname}增加了{data.coursename}课程'
+def download_material(sender): #下载课程资料
+    info=f'{g.uname}下载了{data.coursename}课程的{data.download_material_name}资料'
+    with open('logging.log', 'a', encoding='utf-8') as f:  # 打开日志然后写如
+        f.write(f'{data.time_list[0]}-{data.time_list[1]}-{data.time_list[2]} 星期{intoch[int(data.time_list[3])]} {data.time_list[4]}:{data.time_list[5]}:{data.time_list[6]}\t' + info + "\n")  # 写入日志信息
+
+def upload_material(sender):#上传课程资料
+    info=f"{g.uname}上传了{data.coursename}课程的{data.upload_material_name}资料"
+    with open('logging.log', 'a', encoding='utf-8') as f:  # 打开日志然后写如
+        f.write(f'{data.time_list[0]}-{data.time_list[1]}-{data.time_list[2]} 星期{intoch[int(data.time_list[3])]} {data.time_list[4]}:{data.time_list[5]}:{data.time_list[6]}\t' + info + "\n")  # 写入日志信息
+
 logging_in.connect(logging_into)  # 注册这个日志信号
 login_space.connect(login_space_into)  # 注册信号
 in_course.connect(in_course_into)  # 进入了课内信息管理系统
@@ -153,3 +171,6 @@ out_activity.connect(out_activity_into)  # 进入了课外管理系统
 out_activity_set.connect(out_activity_set_into)  # 设置了课外活动
 direct_course_go.connect(direct_course_go_to) #进入了某个具体的课程
 add_homework.connect(addhomework_act)#添加了新的作业
+upload_homework_signal.connect(put_in_homework) # 上传作业
+upload_material_signal.connect(upload_material)#上传了课程资料
+download_material_signal.connect(download_material) #下载了课程资料

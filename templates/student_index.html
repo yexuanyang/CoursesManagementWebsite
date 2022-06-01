@@ -1,4 +1,74 @@
 {% extends "student_index_base.html" %}
-{% block content %}
-    <h1>学生首页内容</h1>
-{% endblock %}
+{%block content%}
+<div class="tpl-content-wrapper">
+
+    <div class="tpl-portlet-components">
+        <div class="portlet-title">
+            <div class="caption font-green bold">
+                <span class="am-icon-code"></span>
+            </div>
+            <div class="tpl-portlet-input tpl-fz-ml">
+                <div class="portlet-input input-small input-inline">
+                    <div class="input-icon right">
+                </div>
+            </div>
+
+
+        </div>
+        <div class="tpl-block">
+
+            <div class="am-g">
+                <div class="am-u-sm-12">
+                    <form class="am-form">
+{#                        <table class="am-table am-table-striped am-table-hover table-main">#}
+{##}
+{#                            <tbody>#}
+{#                                {% for post in posts %}#}
+{#                                <tr>#}
+{#                                    <td>{{post}}</td>#}
+{#                                </tr>#}
+{#                                {% endfor %}#}
+{#                            </tbody>#}
+{#                        </table>#}
+                        <div class="layui-anim layui-anim-scalesmall-spring">
+                            <span class="index_title">欢迎来到教务管理系统的学生端，学生具有以下功能</span>
+                        <div class="layui-card" style="background-color:rgba(233,236,243,0.3)">
+                            <div class="layui-card-header" style="font-weight: bold;">课内课程管理</div>
+                            <div class="layui-card-body" style="">
+                                <span class="content_introduction">1.显示课程信息</span><br>
+                                <span class="content_introduction">2.会对上课/下课/考试开始/考试结束进行提醒，有随机铃声</span><br>
+                                <span class="content_introduction">3.在列表中查询课程名称（可选关键字：课程名称/任课教师）</span><br>
+                                <span class="content_introduction">4.点击课程名称会跳转到课程的具体页面</span><br>
+                                <span class="content_introduction">5.课程具体页面具有上传作业、上传资料、下载资料的功能</span><br>
+                            </div>
+                        </div>
+                        <div class="layui-card" style="background-color:rgba(233,236,243,0.3)">
+                            <div class="layui-card-header" style="font-weight: bold;">课外课程管理</div>
+                            <div class="layui-card-body" >
+                                <span class="content_introduction">1.显示已经设置的课外信息</span><br>
+                                <span class="content_introduction">2.会对活动开始活动结束进行提醒，有随机铃声</span><br>
+                                <span class="content_introduction">3.可以对课外活动进行添加和更改，并会设置闹钟</span><br>
+                                <span class="content_introduction">4.可以对已经设置的课外活动进行查询（可选关键字：名称/日期）</span><br>
+                                <span class="content_introduction">5.可以对课外活动进行删除（可以进行多选）</span><br>
+                            </div>
+                        </div>
+                        <div class="layui-card" style="background-color:rgba(233,236,243,0.3)">
+                            <div class="layui-card-header" style="font-weight: bold;">导航系统</div>
+                            <div class="layui-card-body" >
+                                <span class="content_introduction">1.进行沙河校区/本部/两个校区跨越导航</span><br>
+                                <span class="content_introduction">2.沙河/本部导航会计算出骑车/步行/距离</span><br>
+                                <span class="content_introduction">3.两个校区导航会计算出校车/公交车预计使用时间，同时拥挤度为随机数</span><br>
+                            </div>
+                        </div>
+                        </div>
+                        <hr>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="tpl-alert"></div>
+    </div>
+</div>
+</div>
+{%endblock%}

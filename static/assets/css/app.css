@@ -2058,3 +2058,17 @@ ul.tpl-dropdown-content li>a.tpl-dropdown-content-message:last-child {
 .yes{
     font-weight: bold;
 }
+.index_title{
+    color: #FF5722;
+    font-weight: bold;
+    text-align: center;
+    font-size: 24px;
+    font-family: "华文仿宋";
+    line-height: 70px;
+}
+.content_introduction{
+    display: block;
+    font-family: "幼圆";
+    font-size: 14px;
+    font-weight: bold;
+}

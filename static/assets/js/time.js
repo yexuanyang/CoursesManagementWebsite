@@ -13,6 +13,7 @@ var MonthTable=[
     [30,30],
     [31,31]
 ];
+var randomNum=0;
 var requestcount=0; //用于降低频率
 // 用于模拟系统时间
 var t = null; //这里是执行时间的函数
@@ -201,6 +202,8 @@ function faketime() {
             out_course_end = true;
             //window.alert( course_name[i].innerHTML + "考试" + "开始了\n结束时间："+ endDate );
             // window.alert(course_name_json[i] + "考试" + "开始了\n结束时间：" + endDate);
+            generateRandom();
+            music.play();//播放音乐
             popupwindowtitle.innerHTML=course_name_json[i] + "考试" + "开始了\n结束时间：" + endDate;
             popupwindowtitle.innerHTML="考试时间到";
             popupwindow.style.display="block";
@@ -215,6 +218,7 @@ function faketime() {
             out_course_end = false;
             //window.alert( course_name[i].innerHTML + "考试" + "结束了" );
             // window.alert(course_name_json[i] + "考试结束了" );
+            generateRandom();
             music.play();//播放音乐
             popupwindowtitle.innerHTML="考试";
             popupwindowmsg.innerHTML=course_name_json[i] + "考试结束了";
@@ -225,6 +229,26 @@ function faketime() {
         if (weekday === parseInt(W)) {
             if (!class_begin && parseInt(H) === parseInt(inCourseTimeKey.substring(3, 5)) && parseInt(min) === parseInt(inCourseTimeKey.substring(6, 8))) {
                 // window.alert(course_name_json[i] + "开始上课了");
+                randomNum=parseInt(Math.random()*5);
+                switch (randomNum){
+                    case 0:
+                        music.src="/static/music/qb.mp3";
+                        break;
+                    case 1:
+                        music.src="/static/music/stay.mp3";
+                        break;
+                    case 2:
+                        music.src="/static/music/wmzb.mp3";
+                        break;
+                    case 3:
+                        music.src="/static/music/xc.mp3";
+                        break;
+                    case 4:
+                        music.src="/static/music/yw.mp3";
+                        break;
+                    default:break;
+                }
+                generateRandom();
                 music.play();//播放音乐
                 popupwindowtitle.innerHTML="上课";
                 popupwindowmsg.innerHTML=course_name_json[i] + "上课了";
@@ -238,6 +262,26 @@ function faketime() {
             }
             if (!class_end && parseInt(H) === parseInt(inCourseTimeKey.substring(9, 11)) && parseInt(min) === parseInt(inCourseTimeKey.substring(12))) {
                 // window.alert(course_name_json[i] + "下课了");
+                randomNum=parseInt(Math.random()*5);
+                switch (randomNum){
+                    case 0:
+                        music.src="/static/music/qb.mp3";
+                        break;
+                    case 1:
+                        music.src="/static/music/stay.mp3";
+                        break;
+                    case 2:
+                        music.src="/static/music/wmzb.mp3";
+                        break;
+                    case 3:
+                        music.src="/static/music/xc.mp3";
+                        break;
+                    case 4:
+                        music.src="/static/music/yw.mp3";
+                        break;
+                    default:break;
+                }
+                generateRandom();
                 music.play();//播放音乐
                 popupwindowtitle.innerHTML="下课了";
                 popupwindowmsg.innerHTML=course_name_json[i] + "下课了";
@@ -255,9 +299,6 @@ function faketime() {
     }
 
     for (let i = 0; i < out_course_json.length; i++) {
-        // const out_course_date_key = out_course_date[i].innerHTML;
-        // const out_course_begin_time_key = out_course_begin_time[i].innerHTML;
-        // const out_course_end_time_key = out_course_end_time[i].innerHTML;
         const out_course_date_key = out_course_date_json[i];
         const out_course_begin_time_key = out_course_begin_time_json[i];
         const out_course_end_time_key = out_course_end_time_json[i];
@@ -271,7 +312,7 @@ function faketime() {
         if (!out_course_begin && year === parseInt(Y) && month === parseInt(MONTH) && day === parseInt((DAY)) && BeginTimeHour === parseInt(H) && BeginTimeMin === parseInt(min)) {
             out_course_begin = true;
             out_course_end = false;
-            // window.alert("课外活动 " + out_course_name_json[i] + " 开始了\n结束时间：" + out_course_end_time_key);
+            generateRandom()
             music.play();//播放音乐
             popupwindowtitle.innerHTML="课外活动";
             popupwindowmsg.innerHTML="课外活动 " + out_course_name_json[i] + " 开始了\n结束时间：" + out_course_end_time_key;
@@ -281,8 +322,7 @@ function faketime() {
         if (!out_course_end && year === parseInt(Y) && month === parseInt(MONTH) && day === parseInt((DAY)) && EndTimeHour === parseInt(H) && EndTimeMin === parseInt(min)) {
             out_course_begin = false;
             out_course_end = true;
-            //window.alert("课外活动 "+out_course_name[i].innerHTML+" 结束了");
-            // window.alert("课外活动 " + out_course_name_json[i] + " 结束了");
+            generateRandom()
             music.play();//播放音乐
             popupwindowtitle.innerHTML="课外活动";
             popupwindowmsg.innerHTML="课外活动 " + out_course_name_json[i] + " 结束了";
@@ -352,15 +392,24 @@ var timetable_schoolbus = document.getElementById("timetable_schoolbus");
 var btn_schoolbus = document.getElementById("show_schoolbus");
 var btn_bus = document.getElementById("show_bus");
 var show_btn_bus = document.getElementById("show_busroute");
+var imgforbus=document.getElementById("imgforbus");
 btn_schoolbus.onclick = function () {
+    imgforbus.style.display="none";
     timetable_bus.style.display = "none";
     timetable_schoolbus.style.display = "none";
     timetable_schoolbus.style.display = "block";
 }
 btn_bus.onclick = function () {
+    imgforbus.style.display="none";
     timetable_bus.style.display = "none";
     timetable_schoolbus.style.display = "none";
     timetable_bus.style.display = "block";
+}
+show_btn_bus.onclick=function (){
+    imgforbus.style.display="none";
+    timetable_bus.style.display = "none";
+    timetable_schoolbus.style.display = "none";
+    imgforbus.style.display="block";
 }
 //上面修复了时间加速的问题
 list_schoolbus1 = [
@@ -448,11 +497,13 @@ function route_organization() {
         var bus_need = document.getElementById("bus_need");
         var bus_needtime = document.getElementById("bus_needtime");
         bus_need.innerHTML = list_bus[bindex];//这里让其中为最近的车的时间
-        bus_needtime.innerHTML = bwt + 40 + walk_time;//走路时间+等待时间+车辆行驶时间
+        var rndom2=Math.random();//生成一个随机数
+        bus_needtime.innerHTML = parseInt(bwt + 40*(1+rndom2) + walk_time)+"分钟，拥挤度为："+(1+rndom2).toFixed(2);//走路时间+等待时间+车辆行驶时间
         var schoolbus_need = document.getElementById("schoolbus_need");
         var schoolbustime = document.getElementById("schoolbus_needtime");
         schoolbus_need.innerHTML = list_schoolbus[sbindex];
-        schoolbustime.innerHTML = sbwt + 40;//等待时间+车辆行驶时间
+        var rndom=Math.random();//生成一个随机数
+        schoolbustime.innerHTML = parseInt(sbwt + 40*(1+rndom))+"分钟，拥挤度为："+(1+rndom).toFixed(2);//等待时间+车辆行驶时间
     } else {//如果在本部或者不进行选择
         var sbindex = 0;
         var sblist = null;//对第一个时间的分割
@@ -485,12 +536,14 @@ function route_organization() {
         }
         var bus_need = document.getElementById("bus_need");
         var bus_needtime = document.getElementById("bus_needtime");
+        var rndom1=Math.random();//随机拥挤度
         bus_need.innerHTML = list_bus[bindex];//这里让其中为最近的车的时间
-        bus_needtime.innerHTML = bwt + 40 + walk_time;//走路时间+等待时间+车辆行驶时间
+        bus_needtime.innerHTML = parseInt(bwt + 40*(1+rndom1) + walk_time)+"分钟，拥挤度为："+(1+rndom1).toFixed(2);//走路时间+等待时间+车辆行驶时间
         var schoolbus_need = document.getElementById("schoolbus_need");
         var schoolbustime = document.getElementById("schoolbus_needtime");
         schoolbus_need.innerHTML = list_schoolbus1[sbindex];
-        schoolbustime.innerHTML = sbwt + 40;//等待时间+车辆行驶时间
+        var rndom=Math.random();//生成一个随机数
+        schoolbustime.innerHTML = parseInt(sbwt + 40*(1+rndom))+"分钟，拥挤度为："+(1+rndom).toFixed(2);//等待时间+车辆行驶时间*拥挤度
     }
 }
 //记录平年和闰年每个月的日期
@@ -531,4 +584,26 @@ function dateplie(){ //用于日期的自增
  */
 function isLeap(year){
     return (year %4==0 && year%100!=0) || (year %400==0);
+}
+function generateRandom(){
+                randomNum=parseInt(Math.random()*5);
+                switch (randomNum){
+                    case 0:
+                        music.src="/static/music/qb.mp3";
+                        break;
+                    case 1:
+                        music.src="/static/music/stay.mp3";
+                        break;
+                    case 2:
+                        music.src="/static/music/wmzb.mp3";
+                        break;
+                    case 3:
+                        music.src="/static/music/xc.mp3";
+                        break;
+                    case 4:
+                        music.src="/static/music/yw.mp3";
+                        break;
+                    default:break;
+                }
+    console.log(randomNum);
 }

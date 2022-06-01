@@ -10,11 +10,11 @@
                     <!-- <i class="am-icon-search"></i> -->
                     <input type="hidden" class="form-control form-control-solid" placeholder="搜索..."> </div>
                 <form action="/route/{{ usn }}" method="post">
-                    <select name="way" lay-verify="" >
+                    <select name="way" lay-verify="required">
                         <option value="010">沙河</option>
                         <option value="001">本部</option>
                         <option value="100">本部到沙河</option>
-                        <input type="submit" value="choose">
+                        <input type="submit" value="choose" class="layui-btn">
                     </select>
                 </form>
             </div>

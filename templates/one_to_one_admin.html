@@ -26,13 +26,13 @@
             <div class="layui-container" id="result_card">
                 <div class="layui-row">
                     <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
-                        公交:您需要乘坐<span id="bus_need"></span>时的公交需要时间:<span id="bus_needtime"></span>分钟
+                        公交:您需要乘坐<span id="bus_need"></span>时的公交需要时间:<span id="bus_needtime"></span>
                     </div>
                 </div>
                 <div class="layui-row">
                     <div class="layui-col-xs6 layui-col-sm6 layui-col-md6"style="width: 100px>
                     <div class="layui-col-xs6 layui-col-sm6 layui-col-md6" style="width: 100px">
-                        校车:您可在乘坐<span id="schoolbus_need"></span>需要时间:<span id="schoolbus_needtime"></span>分钟
+                        校车:您可乘坐<span id="schoolbus_need"></span>的校车，需要时间:<span id="schoolbus_needtime"></span>
                     </div>
                     </div>
                 </div>
@@ -46,6 +46,7 @@
                         <option value="0">沙河</option>
                         <option value="1">本部</option>
                     </select>
+                        <span style="font-size: 15px; font-family:'华文行楷'; color: #be2924;">备注：拥挤度越大代表越拥挤</span>
                     </div>
                     </div>
                     </form>
@@ -178,9 +179,11 @@
                     </tbody>
                     </table>
                 </div>
+
+                <div><img src="/static/assets/img/imgforbus.png" style="height: 500px; display: none;" id="imgforbus"></div>
+
                 </div>
 {#            这里经过思考准备采用ajax向后端定时传递数据的方法进行#}
-            成功解决了问题
         </div>
     </div>
 

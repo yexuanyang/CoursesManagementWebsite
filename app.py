@@ -823,7 +823,7 @@ def materials_submit(coursename_temp):
                 break
         if flag == -1:  # 如果不存在
             length = len(courses_material)
-            temp = {"coursename": data.coursename, "material": [file_name]}
+            temp = {"coursename": data.coursename, "material_name": [file_name]}
             courses_material.append(temp)
             with open('./static/data/courses_material.json', "w", encoding="utf-8") as fp:
                 json.dump(courses_material, fp, ensure_ascii=False, separators=('\n,', ':'))
@@ -914,14 +914,15 @@ def addhomework():
     temp={}
 
     for i in range(0,len(homework)):
+        print(data.coursename==homework[i]["coursename"])
         if data.coursename==homework[i]["coursename"]:
             flag=i
             break
-    if i==-1:#如果是-1的话就是证明没有找到 此时则向列表中添加
-        temp={"coursename":data.coursename}
+    if flag==-1:#如果是-1的话就是证明没有找到 此时则向列表中添加
+        temp={"coursename":data.coursename,"homework":[]}
         homework.append(temp)
     else:
-        homework[i]["homework"].append({"content":request.form.get("addhomework-content"),"filename":""})
+        homework[flag]["homework"].append({"content":request.form.get("addhomework-content"),"filename":""})
     with open('./static/data/homework.json', "w", encoding="utf-8") as fp:  # 最后重新写入
         json.dump(homework, fp, ensure_ascii=False, separators=('\n,', ':'))
     return redirect("/direct_course/" + data.coursename + "/")

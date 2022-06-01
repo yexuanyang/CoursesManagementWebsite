@@ -135,6 +135,13 @@ def direct_course_go_to(sender):
         f.write(
             f'{data.time_list[0]}-{data.time_list[1]}-{data.time_list[2]} 星期{intoch[int(data.time_list[3])]} {data.time_list[4]}:{data.time_list[5]}:{data.time_list[6]}\t' + info + "\n")  # 写入日志信息
 
+def delete_course(sender):
+    info=f'{g.uname}删除了课程'
+    with open('logging.log', 'a', encoding='utf-8') as f:  # 打开日志然后写如
+        f.write(f'{data.time_list[0]}-{data.time_list[1]}-{data.time_list[2]} 星期{intoch[int(data.time_list[3])]} {data.time_list[4]}:{data.time_list[5]}:{data.time_list[6]}\t' + info + "\n")  # 写入日志信息
+
+def add_course(sender):
+    info=f'{g.uname}增加了{data.coursename}课程'
 logging_in.connect(logging_into)  # 注册这个日志信号
 login_space.connect(login_space_into)  # 注册信号
 in_course.connect(in_course_into)  # 进入了课内信息管理系统

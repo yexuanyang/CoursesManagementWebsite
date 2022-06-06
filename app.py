@@ -830,6 +830,7 @@ def direct_course(course):
 '''
 @app.route('/direct_course/materials/<coursename_temp>', methods=['POST'])
 def materials_submit(coursename_temp):
+    g.uname=session.get('now_user')
     data.initconflict()#初始化
     if request.method == "POST":
         UPLOAD_PATH = os.path.join(os.path.dirname(__file__), data.coursename)  # 当前的文件路径
@@ -901,6 +902,7 @@ def download_material():
 
 @app.route('/direct_course/homework/', methods=['POST'])
 def homework_submit(): #前端表单中多添加了一个元素，用于标志第几次作业
+    g.uname=session.get('now_user')
     data.initconflict()#初始化
     if request.method == "POST":
         UPLOAD_PATH = os.path.join(os.path.dirname(__file__), data.coursename + "_homework")  # 当前的文件路径

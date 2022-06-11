@@ -8,7 +8,7 @@ import json
 import datetime
 from werkzeug.utils import secure_filename
 from signals import logging_in, login_space, in_course, route_in, out_activity, in_course_add, in_course_delete, \
-    in_course_change, out_activity_set, data,DataStore,direct_course_go,add_homework,upload_homework_signal,upload_material_signal,download_material_signal
+    in_course_change, out_activity_set, data,DataStore,direct_course_go,add_homework,upload_homework_signal,upload_material_signal,download_material_signal,search_course_activity,route_search
 from forms import OutCourseForms, InCourseForms
 app = Flask(__name__)
 
@@ -21,14 +21,12 @@ course_filePtr = open("./static/data/course.json", "r", encoding='utf-8')
 out_course_filePtr = open("./static/data/out_course.json", "r", encoding='utf-8')
 course_material_filePtr = open("./static/data/courses_material.json", "r", encoding='utf-8')
 homework_filePtr = open("./static/data/homework.json", "r", encoding='utf-8')
-# test_filePtr = open("./static/data/test.json", "r", encoding='utf-8')
 admins = json.load(admin_filePtr)
 student = json.load(student_filePtr)
 courses = json.load(course_filePtr)
 out_courses = json.load(out_course_filePtr)
 courses_material = json.load(course_material_filePtr)
 homework = json.load(homework_filePtr)
-# test = json.load(test_filePtr)
 chToint = {"一": 1, "二": 2, "三": 3, "四": 4, "五": 5, "六": 6, "日": 7}
 
 data1=DataStore()
@@ -979,7 +977,25 @@ def get_data_4_js():
 def get_data_4_js_2():
     return json.dumps(out_courses, ensure_ascii=False)
 
+@app.route('/GetRouteLog',methods=['POST'])
+def GetLog():
+    g.uname=session.get('now_user')
+    log=request.form.get('MSG')
+    log=json.loads(log)
+    print(type(log))
+    g.msg=str(log[0])+"此时的路线长度为:"+str(log[1])+"此时步行用时"+str(log[2])+"此时的自行车用时："+str(log[3])
+    print(g.msg)
+    route_search.send()
+    return "yes";
 
+@app.route('/SearchLog',methods=['POST'])
+def SearchLog():
+    g.uname=session.get('now_user')
+    log=request.form.get('filter')
+    log=json.loads(log)
+    g.msg=log[0] #这里控制其得到输入的文本
+    search_course_activity.send()
+    return "yes"
 if __name__ == '__main__':
     app.run(debug=True, port=2000)
     student_filePtr.close()

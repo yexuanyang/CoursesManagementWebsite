@@ -38,9 +38,6 @@ $('.tpl-left-nav-link-list').on('click', function() {
             .end()
             .find('.tpl-left-nav-more-ico').toggleClass('tpl-left-nav-more-ico-rotate');
     })
-    // ==========================
-    // 头部导航隐藏菜单
-    // ==========================
 
 $('.tpl-header-nav-hover-ico').on('click', function() {
     $('.tpl-left-nav').toggle();
@@ -158,13 +155,7 @@ var pageData = {
         };
         echartsA.setOption(option);
     },
-    // ===============================================
-    // 图表页
-    // ===============================================
     'chart': function chartData() {
-        // ==========================
-        // 百度图表A http://echarts.baidu.com/
-        // ==========================
 
         var echartsC = echarts.init(document.getElementById('tpl-echarts-C'));
 

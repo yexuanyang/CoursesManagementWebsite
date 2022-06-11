@@ -264,7 +264,6 @@ button.addEventListener("click", function() {
     var StartValue = startnode.options[StartIndex].value; //起点的信息
     var EndIndex = endnode.selectedIndex; //终点的索引值
     var EndValue = endnode.options[EndIndex].value; //终点的信息
-
     if (StartIndex == EndIndex) {
         alert("起点和终点不能为同一点！");
         return;
@@ -275,9 +274,28 @@ button.addEventListener("click", function() {
     //将最短路径在地图上展示出来
     DisplayPath(StartIndex, EndIndex);
     //将最短路径的距离在页面上展示出来
-    var timebybike=parseInt((PathArray[EndIndex]/5));//得到的结果是骑自行车用时
+    var timebybike=parseInt((PathArray[EndIndex]/3));//得到的结果是骑自行车用时
     document.getElementById("showdis").style.bottom = "5%";
-    document.getElementById("showdis").innerHTML = "当前路径的距离为：" + pathLength[EndIndex].toString() + "米"+"<br>"+"步行所用的时间为："+parseInt(PathArray[EndIndex]/60)+"分钟"+"<br>"+"自行车所用的时间为："+timebybike+"分钟";
+    document.getElementById("showdis").innerHTML = "采用最短时间策略："+"<br>"+"当前路径的距离为：" + pathLength[EndIndex].toString() + "米"+"<br>"+"步行所用的时间为："+parseInt(PathArray[EndIndex]/60)+"分钟"+"<br>"+"自行车所用的时间为："+parseInt(PathArray[EndIndex]/180)+"分钟";
+    var message=[
+        "进行了最短时间导航从"+pointName[StartIndex]+"导航到"+pointName[EndIndex],
+        pathLength[EndIndex].toString(),
+        parseInt(PathArray[EndIndex]/60),
+        parseInt(PathArray[EndIndex]/180)
+    ];
+    var message_json={
+        MSG:JSON.stringify(message)
+    }
+    $.ajax({
+        url:"/GetRouteLog",
+        type:"post",
+        dataType:"json",
+        async:false,
+        data:message_json,
+        success:function (data){
+            console.log("yes");
+        }
+    });
 });
 
 var button2 = document.getElementById("warninginfo");
@@ -300,15 +318,30 @@ btn.addEventListener("click", function() {
     var EndIndex = endnode.selectedIndex; //终点的索引值
     var EndValue = endnode.options[EndIndex].value; //终点的信息
 
-    if (StartIndex == EndIndex) {
-        alert("起点和终点不能为同一点！");
-        return;
-    }
-
     PathArray = dijkstraLeastlucheng(path, StartIndex);
     DisplayPath(StartIndex, EndIndex);
     var timebybike=parseInt((PathArray[EndIndex]/ByBike)/60);//得到的结果是骑自行车用时
     var timeonfoot=parseInt((PathArray[EndIndex]/Onfootwalk)/60);//步行所用的时间
     document.getElementById("showdis").style.bottom = "5%";
     document.getElementById("showdis").innerHTML = "采用最短路径策略："+"<br>"+"当前路径的距离为：" + PathArray[EndIndex].toString() + "米"+"<br>"+"步行所用的时间为："+timeonfoot+"分钟"+"<br>"+"自行车所用的时间为："+timebybike+"分钟";
+    var message=[
+        "进行了最短路径导航从"+pointName[StartIndex]+"导航到"+pointName[EndIndex],
+        PathArray[EndIndex].toString(),
+        timeonfoot,
+        timebybike
+    ]
+
+    var message_json={
+        MSG:JSON.stringify(message)
+    }
+    $.ajax({
+        url:"/GetRouteLog",
+        type:"post",
+        async:false,
+        data:message_json,
+        success:function (data){
+            console.log("yes");
+        }
+    });
 });
+

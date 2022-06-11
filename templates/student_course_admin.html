@@ -104,6 +104,17 @@ function myFunction() {
     var input, filter, table, tr, td, i;
     input = document.getElementById("myInput");
     filter = input.value.toUpperCase();
+    filteree = "对课内课程进行了关键字’课程名称‘的搜索"+"内容为："+input.value.toUpperCase();
+    filterTemp=[filteree];
+    filter_json={
+        filter:JSON.stringify(filterTemp)
+    }
+    $.ajax({
+        type:'post',
+        async:false,
+        url:"/SearchLog",
+        data:filter_json
+    });
     table = document.getElementById("myTable");
     tr = table.getElementsByTagName("tr");
     list="";
@@ -129,6 +140,17 @@ function myFunction1() {
     var input, filter, table, tr, td, i;
     input = document.getElementById("myInput");
     filter = input.value.toUpperCase();
+    filteree = "对课内课程进行了关键字’任课教师‘的搜索"+"内容为："+input.value.toUpperCase();
+    filterTemp=[filteree];
+    filter_json={
+        filter:JSON.stringify(filterTemp)
+    }
+    $.ajax({
+        type:'post',
+        async:false,
+        url:"/SearchLog",
+        data:filter_json
+    });
     table = document.getElementById("myTable");
     tr = table.getElementsByTagName("tr");
     list="";

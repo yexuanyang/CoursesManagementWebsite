@@ -113,19 +113,11 @@ for (let j = 0;j<out_course_json.length;j++){
 }
 
 var in_course_time = document.getElementsByClassName("courseTime");
-// console.log(parseInt(in_course_time[1].innerHTML.substring(3, 5)));
-// console.log(parseInt(in_course_time[1].innerHTML.substring(6, 8)));
-// console.log(parseInt(in_course_time[1].innerHTML.substring(9, 11)));
-// console.log(parseInt(in_course_time[1].innerHTML.substring(12)));
 var course_name = document.getElementsByClassName("courseName");
-// console.log(course_name);
 var exam_time = document.getElementsByClassName("examTime");
 var out_course_begin_time = document.getElementsByClassName("outCourseBeginTime");
-// console.log(out_course_begin_time[1]["outerText"]);
 var out_course_end_time = document.getElementsByClassName("outCourseEndTime");
-// console.log(out_course_end_time[1]["outerText"]);
 var out_course_date = document.getElementsByClassName("outCourseDate");
-// console.log(out_course_date[1]["outerText"]);
 var out_course_name = document.getElementsByClassName("outCourseName");
 
 

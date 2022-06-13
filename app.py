@@ -1,15 +1,17 @@
-from flask import Flask, render_template, request, redirect, g, session,send_from_directory
+from flask import Flask, render_template, request, redirect, g, session, send_from_directory
 from compress import file_decode  # 解码函数
 from compress import file_encode  # 编码函数
-from compress import datatemp #引入记录文件名的
+from compress import datatemp  # 引入记录文件名的
 import os
 import setting
 import json
 import datetime
 from werkzeug.utils import secure_filename
 from signals import logging_in, login_space, in_course, route_in, out_activity, in_course_add, in_course_delete, \
-    in_course_change, out_activity_set, data,DataStore,direct_course_go,add_homework,upload_homework_signal,upload_material_signal,download_material_signal,search_course_activity,route_search
+    in_course_change, out_activity_set, data, DataStore, direct_course_go, add_homework, upload_homework_signal, \
+    upload_material_signal, download_material_signal, search_course_activity, route_search
 from forms import OutCourseForms, InCourseForms
+
 app = Flask(__name__)
 
 app.config.from_object(setting)
@@ -29,7 +31,7 @@ courses_material = json.load(course_material_filePtr)
 homework = json.load(homework_filePtr)
 chToint = {"一": 1, "二": 2, "三": 3, "四": 4, "五": 5, "六": 6, "日": 7}
 
-data1=DataStore()
+data1 = DataStore()
 
 
 def sort_activity_time(e):
@@ -40,19 +42,19 @@ def strToWeekDay(str):
     str = str.split('-')
     time = datetime.datetime(int(str[0]), int(str[1]), int(str[2]))
     weekday = time.weekday() + 1
-    data.initconflict()#初始化
+    data.initconflict()  # 初始化
     return weekday
 
 
 @app.route('/')
 def index():
-    data.initconflict()#初始化
+    data.initconflict()  # 初始化
     return redirect('/login')
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    data.initconflict()#初始化
+    data.initconflict()  # 初始化
     no_found = False
     error_in_password = False
     usn = request.form.get('usn')
@@ -89,7 +91,7 @@ def login():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    data.initconflict()#初始化
+    data.initconflict()  # 初始化
     if request.method == 'POST':
         usn = request.form.get('usn')
         pwd = request.form.get('pwd')
@@ -121,7 +123,7 @@ def register():
 # 查看usn用户的密码，提供更新功能；若usn == 'admin' 那么显示所有的用户和密码并提供删除和更新功能
 @app.route('/admin/<string:usn>', methods=['GET', 'POST'])
 def admin(usn):
-    data.initconflict()#初始化
+    data.initconflict()  # 初始化
     if request.method == 'POST':
         print(request.form.get('usn'))
         print(request.form.get('pwd'))
@@ -131,7 +133,7 @@ def admin(usn):
 # 删除
 @app.route('/delete', methods=['GET', 'POST'])
 def delete():
-    data.initconflict()#初始化
+    data.initconflict()  # 初始化
     usn = request.args.get('usn')
     print(usn)
     print(request.method)
@@ -161,7 +163,7 @@ def delete():
 # 更新
 @app.route('/change', methods=['GET', 'POST'])
 def change():
-    data.initconflict()#初始化
+    data.initconflict()  # 初始化
     if request.method == 'POST':
         usn = request.form.get('usn')
         pwd = request.form.get('pwd')
@@ -196,7 +198,7 @@ def change():
 # 忘记密码
 @app.route('/forget', methods=['GET', 'POST'])
 def forget():
-    data.initconflict()#初始化
+    data.initconflict()  # 初始化
     print(request.method)
     if request.method == 'POST':
         usn = request.form.get('usn')
@@ -224,19 +226,19 @@ def forget():
 # 学生课程信息管理首页
 @app.route('/index/admin')
 def admin_index():
-    data.initconflict()#初始化
+    data.initconflict()  # 初始化
     return render_template('admin_new.html', cla1='active', time_que=data.time_list)
 
 
 @app.route('/index/student')
 def student_index():
-    data.initconflict()#初始化
+    data.initconflict()  # 初始化
     return render_template('student_index.html', cla1='active', time_que=data.time_list)
 
 
 @app.route('/in_course/student', methods=['POST', 'GET'])
 def in_course_fun_stu():
-    data.initconflict()#初始化
+    data.initconflict()  # 初始化
     g.uname = session.get('now_user')
     in_course.send()
     return render_template('student_course.html', cla2='active', posts=courses, time_que=data.time_list)
@@ -244,7 +246,7 @@ def in_course_fun_stu():
 
 @app.route('/in_course/admin', methods=['POST', 'GET'])
 def in_course_fun():
-    data.initconflict()#初始化
+    data.initconflict()  # 初始化
     g.uname = session.get('now_user')
     in_course.send()
     return render_template('student_course_admin.html', cla2='active', posts=courses, time_que=data.time_list)
@@ -252,7 +254,7 @@ def in_course_fun():
 
 @app.route('/in_course/admin/add', methods=['POST', 'GET'])
 def in_course_add_func():
-    data.initconflict()#初始化
+    data.initconflict()  # 初始化
     form = InCourseForms()
     conflict = False
     conflict_course = {}
@@ -300,7 +302,7 @@ def in_course_add_func():
 
 @app.route('/in_course/admin/delete', methods=['POST', 'GET'])
 def in_course_delete_fun():
-    data.initconflict()#初始化
+    data.initconflict()  # 初始化
     g.uname = session.get('now_user')
     in_course_delete.send()
     delete_index = request.form.getlist('checklist')
@@ -317,7 +319,7 @@ def in_course_delete_fun():
 
 @app.route('/in_course/admin/change', methods=['POST', 'GET'])
 def in_course_change_fun():
-    data.initconflict()#初始化
+    data.initconflict()  # 初始化
     form = InCourseForms()
     id1 = request.args.get('id1')
     cause_name = request.args.get('cause_name')
@@ -379,7 +381,7 @@ def in_course_change_fun():
 
 @app.route('/out_course/admin', methods=['POST', 'GET'])
 def out_course_fun():
-    data.initconflict()#初始化
+    data.initconflict()  # 初始化
     g.uname = session.get('now_user')
     out_activity.send()
     return render_template('student_out_course_admin.html', cla3='active', posts=out_courses, time_que=data.time_list)
@@ -387,7 +389,7 @@ def out_course_fun():
 
 @app.route('/out_course/admin/add', methods=['POST', 'GET'])
 def out_course_add_fun():
-    data.initconflict()#初始化
+    data.initconflict()  # 初始化
     conflict = False
     conflict_activity = {}
     conflict_in_course = False
@@ -445,14 +447,14 @@ def out_course_add_fun():
 
 @app.route('/out_course/admin/delete', methods=['POST', 'GET'])
 def out_course_del_fun():
-    data.initconflict()#初始化
+    data.initconflict()  # 初始化
     global time_list
     g.uname = session.get('now_user')
     out_activity.send()
     delete_list = request.form.getlist('checklist')
     print(delete_list)
     for i in delete_list:
-        if int(i) - 1 == len(delete_list):
+        if int(i) - 1 == len(out_courses):
             out_courses.pop(-1)
         else:
             out_courses.pop(int(i) - 1)
@@ -463,7 +465,7 @@ def out_course_del_fun():
 
 @app.route('/out_course/admin/change', methods=['POST', 'GET'])
 def out_course_change_fun():
-    data.initconflict()#初始化
+    data.initconflict()  # 初始化
     conflict = False
     conflict_activity = {}
     conflict_in_course = False
@@ -540,7 +542,7 @@ def out_course_change_fun():
 
 @app.route('/out_course/student', methods=['POST', 'GET'])
 def out_course_fun_stu():
-    data.initconflict()#初始化
+    data.initconflict()  # 初始化
     g.uname = session.get('now_user')
     out_activity.send()
     return render_template('student_out_course.html', cla3='active', posts=out_courses, time_que=data.time_list)
@@ -548,7 +550,7 @@ def out_course_fun_stu():
 
 @app.route('/out_course/student/add', methods=['POST', 'GET'])
 def out_course_add_fun_stu():
-    data.initconflict()#初始化
+    data.initconflict()  # 初始化
     form = OutCourseForms()
     conflict = False
     conflict_activity = {}
@@ -600,19 +602,21 @@ def out_course_add_fun_stu():
                 json.dump(out_courses, fp, ensure_ascii=False, separators=('\n,', ':'))
             return redirect('/out_course/student')
 
-    return render_template('add_out_course.html', cla3='activate', posts=out_courses, time_que=time_list, form=form,
+    return render_template('add_out_course.html', cla3='activate', posts=out_courses, time_que=data.time_list, form=form,
                            conflict=conflict, conflict_activity=conflict_activity,
                            conflict_in_course=conflict_in_course, conflict_which_course=conflict_which_course)
 
 
 @app.route('/out_course/student/delete', methods=['POST', 'GET'])
 def out_course_del_fun_stu():
-    data.initconflict()#初始化
+    data.initconflict()  # 初始化
     g.uname = session.get('now_user')
     out_activity_set.send()
     delete_list = request.form.getlist('checklist')
+    print(delete_list)
+    print(len(delete_list))
     for i in delete_list:
-        if int(i) - 1 == len(delete_list):
+        if int(i) - 1 == len(out_courses):
             out_courses.pop(-1)
         else:
             out_courses.pop(int(i) - 1)
@@ -623,7 +627,7 @@ def out_course_del_fun_stu():
 
 @app.route('/out_course/student/change', methods=['POST', 'GET'])
 def out_course_change_fun_stu():
-    data.initconflict()#初始化
+    data.initconflict()  # 初始化
     global time_list
     form = OutCourseForms()
     id1 = request.args.get('id1')
@@ -699,7 +703,7 @@ def out_course_change_fun_stu():
 
 @app.route('/route/admin', methods=['POST', 'GET'])
 def route():
-    data.initconflict()#初始化
+    data.initconflict()  # 初始化
     global time_list
     g.uname = session.get('now_user')
     str_all = ["/static/js/qustmap_shahe.js", "/static/js/qustmap_headquarter.js"]
@@ -724,7 +728,7 @@ def route():
 
 @app.route('/route/student', methods=['POST', 'GET'])
 def route_stu():
-    data.initconflict()#初始化
+    data.initconflict()  # 初始化
     global time_list
     g.uname = session.get('now_user')
     str_all = ["/static/js/qustmap_shahe.js", "/static/js/qustmap_headquarter.js"]
@@ -749,7 +753,7 @@ def route_stu():
 
 @app.route('/logging/admin', methods=['POST', 'GET'])
 def logging_fun():
-    data.initconflict()#初始化
+    data.initconflict()  # 初始化
     global time_list
     g.uname = session.get('now_user')
     if request.method == 'POST':
@@ -772,12 +776,12 @@ def logging_fun():
 
 @app.route('/direct_course/<course>/')
 def direct_course(course):
-    display="" #init
-    g.uname=session.get('now_user')
-    if g.uname=="master":
-        display="block"
+    display = ""  # init
+    g.uname = session.get('now_user')
+    if g.uname == "master":
+        display = "block"
     else:
-        display="none"
+        display = "none"
     direct_course_go.send()
     global homework
     global coursename
@@ -787,8 +791,8 @@ def direct_course(course):
     flag = -1
     flag1 = -1  # 不存在课程资料
     flag2 = -1  # 不存在作业
-    homework_length=0 #作业的个数
-    material_length=0 #资料的个数
+    homework_length = 0  # 作业的个数
+    material_length = 0  # 资料的个数
     post = None
     for a in courses:
         if a.get("cause_name") == course:
@@ -804,32 +808,36 @@ def direct_course(course):
                 break
         if flag1 == -1:  # 如果其不存在
             material = None
-            material_length=0
+            material_length = 0
         else:  # 如果存在的话
             material = courses_material[flag1]
             material_length = len(material["material_name"])
 
-        for j in range(0, len(homework)): #这里获得的大小
+        for j in range(0, len(homework)):  # 这里获得的大小
             if homework[j]["coursename"] == course:
                 flag2 = j
                 break
         if flag2 == -1:  # 如果不存在
             homework1 = None
-            homework_length=0
+            homework_length = 0
         else:  # 如果存在
             homework1 = homework[flag2]
             homework_length = len(homework1["homework"])
-            #最后的变量是标志是否发生了冲突
-        return render_template("causes_page.html", post=post, mat=material, hw=homework1,hw_length=homework_length,mat_length=material_length,ifdisplay=display,con=data.material_conflict,back=g.uname)
+            # 最后的变量是标志是否发生了冲突
+        return render_template("causes_page.html", post=post, mat=material, hw=homework1, hw_length=homework_length,
+                               mat_length=material_length, ifdisplay=display, con=data.material_conflict, back=g.uname)
+
 
 '''
 课程资料提交位置:
 实现功能：提交，压缩，下载，删除
 '''
+
+
 @app.route('/direct_course/materials/<coursename_temp>', methods=['POST'])
 def materials_submit(coursename_temp):
-    g.uname=session.get('now_user')
-    data.initconflict()#初始化
+    g.uname = session.get('now_user')
+    data.initconflict()  # 初始化
     if request.method == "POST":
         UPLOAD_PATH = os.path.join(os.path.dirname(__file__), data.coursename)  # 当前的文件路径
         if not os.path.exists(UPLOAD_PATH):  # 如果文件夹不存在则创建文件夹
@@ -839,7 +847,7 @@ def materials_submit(coursename_temp):
         filename = material_file.filename
         file_name = secure_filename(filename)  # 文件名的安全转换
         file_path = os.path.join(UPLOAD_PATH, file_name)
-        material_file.save(file_path) #保存文件
+        material_file.save(file_path)  # 保存文件
         flag = -1  # 还是标志是否存在这个课程的名称 如果不存在则增加
         for i in range(0, len(courses_material)):
             if courses_material[i]["coursename"] == data.coursename:
@@ -847,14 +855,14 @@ def materials_submit(coursename_temp):
                 break
         if request.form.get('compress') == "yes":
             file_encode(file_path)
-            os.remove(file_path) # 删除源文件 然后生成一个新的名字
-            file_name=file_name.split(".")[0]+".ys" #生成一个新的名字
-        for i in range(0,len(courses_material[flag]["material_name"])):
-            if courses_material[flag]["material_name"][i].split(".")[0]==file_name.split(".")[0]:
-                data.material_conflict=1#发生了冲突
-                return redirect("/direct_course/" + coursename_temp) #如果发生了冲突则直接返回
+            os.remove(file_path)  # 删除源文件 然后生成一个新的名字
+            file_name = file_name.split(".")[0] + ".ys"  # 生成一个新的名字
+        for i in range(0, len(courses_material[flag]["material_name"])):
+            if courses_material[flag]["material_name"][i].split(".")[0] == file_name.split(".")[0]:
+                data.material_conflict = 1  # 发生了冲突
+                return redirect("/direct_course/" + coursename_temp)  # 如果发生了冲突则直接返回
             else:
-                data.material_conflict=0
+                data.material_conflict = 0
         if flag == -1:  # 如果不存在
             length = len(courses_material)
             temp = {"coursename": data.coursename, "material_name": [file_name]}
@@ -863,59 +871,64 @@ def materials_submit(coursename_temp):
                 json.dump(courses_material, fp, ensure_ascii=False, separators=('\n,', ':'))
         else:
             courses_material[flag]["material_name"].append(file_name)  # 如果存在则增加名字
-        data.upload_material_name=file_name
-        upload_material_signal.send() #发送信号
-        with open('./static/data/courses_material.json', "w", encoding="utf-8") as fp:#最后重新写入
+        data.upload_material_name = file_name
+        upload_material_signal.send()  # 发送信号
+        with open('./static/data/courses_material.json', "w", encoding="utf-8") as fp:  # 最后重新写入
             json.dump(courses_material, fp, ensure_ascii=False, separators=('\n,', ':'))
-        return redirect("/direct_course/"+coursename_temp)
+        return redirect("/direct_course/" + coursename_temp)
 
-@app.route('/course/download/',methods=['POST']) #实现下载的路由
+
+@app.route('/course/download/', methods=['POST'])  # 实现下载的路由
 def download_material():
-    data.initconflict()#初始化
-    g.uname=session.get('now_user')
+    data.initconflict()  # 初始化
+    g.uname = session.get('now_user')
     DOWNLOAD_PATH = os.path.join(os.path.dirname(__file__), data.coursename)  # 当前的文件路径
-    #得到文件名
-    download_name=request.form.get("downloadmaterial")
-    #将文件名拆分
+    # 得到文件名
+    download_name = request.form.get("downloadmaterial")
+    # 将文件名拆分
 
-    if download_name.split(".")[1]=="ys": #如果是一个压缩文件
+    if download_name.split(".")[1] == "ys":  # 如果是一个压缩文件
         DOWNLOAD_PATH_YS = os.path.join(DOWNLOAD_PATH, download_name)  # 将字符串进行连接
-        file_decode(DOWNLOAD_PATH_YS) #解压当前文件
-        resource=download_name.split(".")[0]+"."+datatemp.decodeFile
-        DOWNLOAD_PATH_RESULT=os.path.join(DOWNLOAD_PATH,resource) #将路径进行拼接
-        data.download_material_name=resource
-        download_material_signal.send() # 下载成功信号
-        return send_from_directory(path=DOWNLOAD_PATH_RESULT, directory=DOWNLOAD_PATH, filename=resource,as_attachment=True)
+        file_decode(DOWNLOAD_PATH_YS)  # 解压当前文件
+        resource = download_name.split(".")[0] + "." + datatemp.decodeFile
+        DOWNLOAD_PATH_RESULT = os.path.join(DOWNLOAD_PATH, resource)  # 将路径进行拼接
+        data.download_material_name = resource
+        download_material_signal.send()  # 下载成功信号
+        return send_from_directory(path=DOWNLOAD_PATH_RESULT, directory=DOWNLOAD_PATH, filename=resource,
+                                   as_attachment=True)
     else:
-        DOWNLOAD_PATH_RESULT=os.path.join(DOWNLOAD_PATH,download_name)
+        DOWNLOAD_PATH_RESULT = os.path.join(DOWNLOAD_PATH, download_name)
         print(DOWNLOAD_PATH_RESULT)
-        data.download_material_name=download_name
-        download_material_signal.send() #下载成功发送信号
-        return send_from_directory(path=DOWNLOAD_PATH_RESULT, directory=DOWNLOAD_PATH, filename=download_name,as_attachment=True)
+        data.download_material_name = download_name
+        download_material_signal.send()  # 下载成功发送信号
+        return send_from_directory(path=DOWNLOAD_PATH_RESULT, directory=DOWNLOAD_PATH, filename=download_name,
+                                   as_attachment=True)
+
 
 '''
 作业提交位置：
 实现功能：压缩，查重
 '''
 
+
 @app.route('/direct_course/homework/', methods=['POST'])
-def homework_submit(): #前端表单中多添加了一个元素，用于标志第几次作业
-    g.uname=session.get('now_user')
-    data.initconflict()#初始化
+def homework_submit():  # 前端表单中多添加了一个元素，用于标志第几次作业
+    g.uname = session.get('now_user')
+    data.initconflict()  # 初始化
     if request.method == "POST":
         UPLOAD_PATH = os.path.join(os.path.dirname(__file__), data.coursename + "_homework")  # 当前的文件路径
         if not os.path.exists(UPLOAD_PATH):  # 如果文件夹不存在则创建文件夹
             os.mkdir(UPLOAD_PATH)  # 创建文件夹
-        #得到文件名
+        # 得到文件名
         homework_file = request.files.get("course-homework")
         # 保存文件
         filename = homework_file.filename
         file_name = secure_filename(filename)  # 文件名的安全转换
-        index=int(request.form.get("homeworkoption"))#传递过来的提交第几次作业
-        Directory_path=os.path.join(UPLOAD_PATH,f"第{index+1}次作业")
+        index = int(request.form.get("homeworkoption"))  # 传递过来的提交第几次作业
+        Directory_path = os.path.join(UPLOAD_PATH, f"第{index + 1}次作业")
         if not os.path.exists(Directory_path):
-            os.mkdir(Directory_path) #如果不存在第i次作业这个文件夹则创建
-        #得到新的文件位置
+            os.mkdir(Directory_path)  # 如果不存在第i次作业这个文件夹则创建
+        # 得到新的文件位置
         file_path = os.path.join(Directory_path, file_name)
         flag = -1  # 还是标志是否存在这个课程的名称 如果不存在则增加
         for i in range(0, len(homework)):
@@ -927,46 +940,49 @@ def homework_submit(): #前端表单中多添加了一个元素，用于标志�
             homework.append(temp)
         else:
             if file_name == homework[flag]["homework"][index]["filename"]:
-                data.material_conflict=2 # 发生了冲突结果是这样的
+                data.material_conflict = 2  # 发生了冲突结果是这样的
                 return redirect("/direct_course/" + data.coursename + "/")
-            else: #如果当前不存在
-                data.material_conflict=0 # 没有发生冲突
+            else:  # 如果当前不存在
+                data.material_conflict = 0  # 没有发生冲突
                 homework_file.save(file_path)
-                homework[flag]["homework"][index]["filename"]=file_name #如果当前没有发生冲突则增加
+                homework[flag]["homework"][index]["filename"] = file_name  # 如果当前没有发生冲突则增加
         if request.form.get('compress') == "yes":
             file_encode(file_path)
-        upload_homework_signal.send() #上传成功作业
-        with open('./static/data/homework.json', "w", encoding="utf-8") as fp:#最后重新写入
+        upload_homework_signal.send()  # 上传成功作业
+        with open('./static/data/homework.json', "w", encoding="utf-8") as fp:  # 最后重新写入
             json.dump(homework, fp, ensure_ascii=False, separators=('\n,', ':'))
         return redirect("/direct_course/" + data.coursename + "/")
 
-@app.route('/direct_course/homework/addhomework/',methods=['POST'])
+
+@app.route('/direct_course/homework/addhomework/', methods=['POST'])
 def addhomework():
     '''添加作业'''
-    g.uname=session.get('now_user')
-    add_homework.send() #向日志写入信息
-    flag=-1 #用于判断是否存在当前课程的作业
-    temp={}
+    g.uname = session.get('now_user')
+    add_homework.send()  # 向日志写入信息
+    flag = -1  # 用于判断是否存在当前课程的作业
+    temp = {}
 
-    for i in range(0,len(homework)):
-        print(data.coursename==homework[i]["coursename"])
-        if data.coursename==homework[i]["coursename"]:
-            flag=i
+    for i in range(0, len(homework)):
+        print(data.coursename == homework[i]["coursename"])
+        if data.coursename == homework[i]["coursename"]:
+            flag = i
             break
-    if flag==-1:#如果是-1的话就是证明没有找到 此时则向列表中添加
-        temp={"coursename":data.coursename,"homework":[]}
+    if flag == -1:  # 如果是-1的话就是证明没有找到 此时则向列表中添加
+        temp = {"coursename": data.coursename, "homework": []}
         homework.append(temp)
     else:
-        homework[flag]["homework"].append({"content":request.form.get("addhomework-content"),"filename":""})
+        homework[flag]["homework"].append({"content": request.form.get("addhomework-content"), "filename": ""})
     with open('./static/data/homework.json', "w", encoding="utf-8") as fp:  # 最后重新写入
         json.dump(homework, fp, ensure_ascii=False, separators=('\n,', ':'))
     return redirect("/direct_course/" + data.coursename + "/")
+
 
 @app.route('/time_control', methods=['POST'])  # 用于控制时间 ，所有的时间系统都采用当前的操作
 def time_control():
     time = request.form.get('time')
     data.time_list = json.loads(time)  # 得到了时间列表
     return "time_yes"
+
 
 @app.route('/getData4JS', methods=['POST', 'GET'])
 def get_data_4_js():
@@ -977,25 +993,29 @@ def get_data_4_js():
 def get_data_4_js_2():
     return json.dumps(out_courses, ensure_ascii=False)
 
-@app.route('/GetRouteLog',methods=['POST'])
+
+@app.route('/GetRouteLog', methods=['POST'])
 def GetLog():
-    g.uname=session.get('now_user')
-    log=request.form.get('MSG')
-    log=json.loads(log)
+    g.uname = session.get('now_user')
+    log = request.form.get('MSG')
+    log = json.loads(log)
     print(type(log))
-    g.msg=str(log[0])+"此时的路线长度为:"+str(log[1])+"此时步行用时"+str(log[2])+"此时的自行车用时："+str(log[3])
+    g.msg = str(log[0]) + "此时的路线长度为:" + str(log[1]) + "此时步行用时" + str(log[2]) + "此时的自行车用时：" + str(log[3])
     print(g.msg)
     route_search.send()
-    return "yes";
+    return "yes"
 
-@app.route('/SearchLog',methods=['POST'])
+
+@app.route('/SearchLog', methods=['POST'])
 def SearchLog():
-    g.uname=session.get('now_user')
-    log=request.form.get('filter')
-    log=json.loads(log)
-    g.msg=log[0] #这里控制其得到输入的文本
+    g.uname = session.get('now_user')
+    log = request.form.get('filter')
+    log = json.loads(log)
+    g.msg = log[0]  # 这里控制其得到输入的文本
     search_course_activity.send()
     return "yes"
+
+
 if __name__ == '__main__':
     app.run(debug=True, port=2000)
     student_filePtr.close()

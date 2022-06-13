@@ -285,8 +285,8 @@ def in_course_add_func():
             if weekday == int_day:
                 course_begin_time = one_in_course['time'][3:8]
                 course_end_time = one_in_course['time'][9:]
-                if (course_begin_time < time < course_end_time) or (
-                        course_begin_time < class_end_time < course_end_time):
+                if (course_begin_time <= time <= course_end_time) or (
+                        course_begin_time <= class_end_time <= course_end_time):
                     conflict = True
                     conflict_course = one_in_course
                     break
@@ -362,8 +362,8 @@ def in_course_change_fun():
             if weekday == int_day:
                 course_begin_time = one_in_course['time'][3:8]
                 course_end_time = one_in_course['time'][9:]
-                if (course_begin_time < time < course_end_time) or (
-                        course_begin_time < class_end_time < course_end_time):
+                if (course_begin_time <= time <= course_end_time) or (
+                        course_begin_time <= class_end_time <= course_end_time):
                     conflict = True
                     conflict_course = one_in_course
                     break
@@ -414,9 +414,9 @@ def out_course_add_fun():
         for out_courses_activity in out_courses_temp:
             if activity_time == out_courses_activity['activity_time']:
                 #     进入活动时间的判断
-                if (out_courses_activity['begin_time'] < begin_time < out_courses_activity['end_time']) \
+                if (out_courses_activity['begin_time'] <= begin_time <= out_courses_activity['end_time']) \
                         or (
-                        out_courses_activity['begin_time'] < end_time < out_courses_activity['end_time']):
+                        out_courses_activity['begin_time'] <= end_time <= out_courses_activity['end_time']):
                     conflict = True
                     conflict_activity = out_courses_activity
                     break
@@ -428,8 +428,8 @@ def out_course_add_fun():
             if weekday == int_day:
                 course_begin_time = one_in_course['time'][3:8]
                 course_end_time = one_in_course['time'][9:]
-                if (course_begin_time < begin_time < course_end_time) or (
-                        course_begin_time < end_time < course_end_time):
+                if (course_begin_time <= begin_time <= course_end_time) or (
+                        course_begin_time <= end_time <= course_end_time):
                     conflict_in_course = True
                     conflict_which_course = one_in_course
                     break
@@ -504,9 +504,9 @@ def out_course_change_fun():
         for out_courses_activity in out_courses_temp:
             if activity_time == out_courses_activity['activity_time']:
                 #     进入活动时间的判断
-                if (out_courses_activity['begin_time'] < begin_time < out_courses_activity['end_time']) \
+                if (out_courses_activity['begin_time'] <= begin_time <= out_courses_activity['end_time']) \
                         or (
-                        out_courses_activity['begin_time'] < end_time < out_courses_activity['end_time']):
+                        out_courses_activity['begin_time'] <= end_time <= out_courses_activity['end_time']):
                     conflict = True
                     conflict_activity = out_courses_activity
                     break
@@ -519,8 +519,8 @@ def out_course_change_fun():
             if weekday == int_day:
                 course_begin_time = one_in_course['time'][3:8]
                 course_end_time = one_in_course['time'][9:]
-                if (course_begin_time < begin_time < course_end_time) or (
-                        course_begin_time < end_time < course_end_time):
+                if (course_begin_time <= begin_time <= course_end_time) or (
+                        course_begin_time <= end_time <= course_end_time):
                     conflict_in_course = True
                     conflict_which_course = one_in_course
                     break
@@ -575,9 +575,9 @@ def out_course_add_fun_stu():
         for out_courses_activity in out_courses_temp:
             if activity_time == out_courses_activity['activity_time']:
                 #     进入活动时间的判断
-                if (out_courses_activity['begin_time'] < begin_time < out_courses_activity['end_time']) \
+                if (out_courses_activity['begin_time'] <= begin_time <= out_courses_activity['end_time']) \
                         or (
-                        out_courses_activity['begin_time'] < end_time < out_courses_activity['end_time']):
+                        out_courses_activity['begin_time'] <= end_time <= out_courses_activity['end_time']):
                     conflict = True
                     conflict_activity = out_courses_activity
                     break
@@ -590,8 +590,8 @@ def out_course_add_fun_stu():
             if weekday == int_day:
                 course_begin_time = one_in_course['time'][3:8]
                 course_end_time = one_in_course['time'][9:]
-                if (course_begin_time < begin_time < course_end_time) or (
-                        course_begin_time < end_time < course_end_time):
+                if (course_begin_time <= begin_time <= course_end_time) or (
+                        course_begin_time <= end_time <= course_end_time):
                     conflict_in_course = True
                     conflict_which_course = one_in_course
                     break
@@ -665,9 +665,9 @@ def out_course_change_fun_stu():
         for out_courses_activity in out_courses_temp:
             if activity_time == out_courses_activity['activity_time']:
                 #     进入活动时间的判断
-                if (out_courses_activity['begin_time'] < begin_time < out_courses_activity['end_time']) \
+                if (out_courses_activity['begin_time'] <= begin_time <= out_courses_activity['end_time']) \
                         or (
-                        out_courses_activity['begin_time'] < end_time < out_courses_activity['end_time']):
+                        out_courses_activity['begin_time'] <= end_time <= out_courses_activity['end_time']):
                     conflict = True
                     conflict_activity = out_courses_activity
                     break
@@ -680,8 +680,8 @@ def out_course_change_fun_stu():
             if weekday == int_day:
                 course_begin_time = one_in_course['time'][3:8]
                 course_end_time = one_in_course['time'][9:]
-                if (course_begin_time < begin_time < course_end_time) or (
-                        course_begin_time < end_time < course_end_time):
+                if (course_begin_time <= begin_time <= course_end_time) or (
+                        course_begin_time <= end_time <= course_end_time):
                     conflict_in_course = True
                     conflict_which_course = one_in_course
                     break

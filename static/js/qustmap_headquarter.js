@@ -1,15 +1,65 @@
 //Dijkstra单源最短路径
-var PathToEnd = new Array(13);
+var PathToEnd = new Array(20);
+var pathLength=[];
 var ByBike=10; //通过自行车 10m/s
 var Onfootwalk=2;//通过走路 2m/s
 function dijkstra(path, index) {
+    var m = path && path.length; //用于判断是不是为空
+    var n = m && path[0].length;//用于判断第一行是不是为空
+    if (m && n && m === n && index < n) { //如果表不为空 同时第一行不为空 然后
+        //初始化distance
+        var dis = [];
+        pathLength=[];
+        var visited = []; //用于标识index号至其他顶点的距离是否确定
+        var randomNum;
+        //这里进行一定更改，把时间作为边的权值压入栈
+        for (var i = 0; i < n; ++i) { //循环遍历 把到index节点的所有距离压入栈区
+            randomNum=Math.random();//生成一个随机数为拥挤度
+            if(path[index][i]==99999){
+                dis.push(path[index][i]);
+            }else{
+                dis.push(path[index][i]/((randomNum+1)*Onfootwalk)); //随机生成拥挤度
+            }
+            console.log(dis);
+            pathLength.push(path[index][i]); //用于记录路径
+            visited.push(false) //把访问的地方进行初始化
+            PathToEnd[i] = -1; //到达最后的路径初始化为-1
+        }
+        visited[index] = true; //把开始节点的访问设置为已经访问
+
+        for (i = 0; i < n; i++) {
+            var minIndex, min = Infinity; //将最小值设置为正无穷 方便进行比较
+            //找出剩余的不确定的点到index最短的距离对应的索引
+            for (var j = 0; j < n; ++j) { //循环查找最小的点
+                if (!visited[j] && dis[j] < min) { //如果当前的节点没有访问 也就是没有加入到当前的点中 并且值小于当前的最小值可以将
+                    minIndex = j;
+                    min = dis[j];
+                }
+            }
+            visited[minIndex] = true; //标识index到此顶点的距离已经确认
+            for (var k = 0; k < n; ++k) {
+                //判断minIndex到k之间有无道路
+                if (!visited[k] && path[minIndex][k] < Infinity) {
+                    //更新distance
+                    var randomTest=Math.random();
+                    if (dis[k] > dis[minIndex] + path[minIndex][k]/((1+randomTest)*Onfootwalk)) {
+                        dis[k] = dis[minIndex] + path[minIndex][k]/((1+randomTest)*Onfootwalk);
+                        pathLength[k]=pathLength[minIndex]+path[minIndex][k];
+                        PathToEnd[k] = minIndex;
+                    }
+                }
+            }
+        }
+        return dis;
+    }
+}
+function dijkstraLeastlucheng(path, index) {
     var m = path && path.length;
     var n = m && path[0].length;
     if (m && n && m === n && index < n) {
         //初始化distance
         var dis = [];
         var randomNumber=Math.random();
-        console.log(randomNumber);
         var visited = []; //用于标识index号至其他顶点的距离是否确定
         for (var i = 0; i < n; ++i) {
             dis.push(path[index][i]);
@@ -43,7 +93,6 @@ function dijkstra(path, index) {
         return dis;
     }
 }
-
 //结点信息
 var pointName = [
     "学生公寓1",
@@ -150,12 +199,9 @@ function DisplayPath(StartIndex, EndIndex) {
     var animationtmp=[];
     var animation=[]; //这是真的animation 上面那个是倒着进行的操作
     var StartPoint = pointCord[StartIndex];
-    var EndPoint = pointCord[EndIndex];
-    console.log("StartPoint: " + StartPoint);
-    console.log("EndPoint: " + EndPoint);
+    var EndPoint=pointCord[EndIndex];
     //获取最短路径
-    var p = EndIndex;
-    EndPoint = pointCord[p];
+    var p=EndIndex;
     animationtmp.push(
         {
             'lng':EndPoint[0],
@@ -172,7 +218,7 @@ function DisplayPath(StartIndex, EndIndex) {
         );
         p = PathToEnd[p];
     }
-    console.log(StartIndex);
+    // console.log(StartIndex);
     StartPoint = pointCord[StartIndex];
     animation.push(
             {
@@ -187,7 +233,6 @@ function DisplayPath(StartIndex, EndIndex) {
     for(var i=0;i<animation.length;i++){
         animationpoint.push(new BMapGL.Point(animation[i].lng,animation[i].lat));
     }
-    console.log(animationpoint);
     var pl=new BMapGL.Polyline(animationpoint);
     var trackAni=null;
     if(trackAni==null){ //如果不存在则创建新的
@@ -219,25 +264,38 @@ button.addEventListener("click", function() {
     var StartValue = startnode.options[StartIndex].value; //起点的信息
     var EndIndex = endnode.selectedIndex; //终点的索引值
     var EndValue = endnode.options[EndIndex].value; //终点的信息
-    console.log("起点：" + StartIndex + "  " + StartValue);
-    console.log("终点：" + EndIndex + "  " + EndValue);
-
     if (StartIndex == EndIndex) {
         alert("起点和终点不能为同一点！");
         return;
     }
 
     PathArray = dijkstra(path, StartIndex);
-    console.log(PathArray);
     //alert("该点到其余各点的最短距离为：" + PathArray);
     //将最短路径在地图上展示出来
     DisplayPath(StartIndex, EndIndex);
-    console.log(PathToEnd);
     //将最短路径的距离在页面上展示出来
-    var timebybike=parseInt((PathArray[EndIndex]/ByBike)/60);//得到的结果是骑自行车用时
-    var timeonfoot=parseInt((PathArray[EndIndex]/Onfootwalk)/60);//步行所用的时间
+    var timebybike=parseInt((PathArray[EndIndex]/3));//得到的结果是骑自行车用时
     document.getElementById("showdis").style.bottom = "5%";
-    document.getElementById("showdis").innerHTML = "当前路径的距离为：" + PathArray[EndIndex].toString() + "米"+"<br>"+"步行所用的时间为："+timeonfoot+"分钟"+"<br>"+"自行车所用的时间为："+timebybike+"分钟";
+    document.getElementById("showdis").innerHTML = "采用最短时间策略："+"<br>"+"当前路径的距离为：" + pathLength[EndIndex].toString() + "米"+"<br>"+"步行所用的时间为："+parseInt(PathArray[EndIndex]/60)+"分钟"+"<br>"+"自行车所用的时间为："+parseInt(PathArray[EndIndex]/180)+"分钟";
+    var message=[
+        "进行了最短时间导航从"+pointName[StartIndex]+"导航到"+pointName[EndIndex],
+        pathLength[EndIndex].toString(),
+        parseInt(PathArray[EndIndex]/60),
+        parseInt(PathArray[EndIndex]/180)
+    ];
+    var message_json={
+        MSG:JSON.stringify(message)
+    }
+    $.ajax({
+        url:"/GetRouteLog",
+        type:"post",
+        dataType:"json",
+        async:false,
+        data:message_json,
+        success:function (data){
+            console.log("yes");
+        }
+    });
 });
 
 var button2 = document.getElementById("warninginfo");
@@ -249,3 +307,41 @@ button2.addEventListener("click", function() {
     document.getElementById("showdis").innerHTML = "👿如不能正常使用：<br/>🕸检查网络<br/>💻更换浏览器";
 
 });
+var btn=document.getElementById("button1");
+btn.addEventListener("click", function() {
+    if (button.click == false) {
+        return;
+    }
+
+    var StartIndex = startnode.selectedIndex; //起点的索引值
+    var StartValue = startnode.options[StartIndex].value; //起点的信息
+    var EndIndex = endnode.selectedIndex; //终点的索引值
+    var EndValue = endnode.options[EndIndex].value; //终点的信息
+
+    PathArray = dijkstraLeastlucheng(path, StartIndex);
+    DisplayPath(StartIndex, EndIndex);
+    var timebybike=parseInt((PathArray[EndIndex]/ByBike)/60);//得到的结果是骑自行车用时
+    var timeonfoot=parseInt((PathArray[EndIndex]/Onfootwalk)/60);//步行所用的时间
+    document.getElementById("showdis").style.bottom = "5%";
+    document.getElementById("showdis").innerHTML = "采用最短路径策略："+"<br>"+"当前路径的距离为：" + PathArray[EndIndex].toString() + "米"+"<br>"+"步行所用的时间为："+timeonfoot+"分钟"+"<br>"+"自行车所用的时间为："+timebybike+"分钟";
+    var message=[
+        "进行了最短路径导航从"+pointName[StartIndex]+"导航到"+pointName[EndIndex],
+        PathArray[EndIndex].toString(),
+        timeonfoot,
+        timebybike
+    ]
+
+    var message_json={
+        MSG:JSON.stringify(message)
+    }
+    $.ajax({
+        url:"/GetRouteLog",
+        type:"post",
+        async:false,
+        data:message_json,
+        success:function (data){
+            console.log("yes");
+        }
+    });
+});
+

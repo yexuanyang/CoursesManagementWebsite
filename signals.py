@@ -68,6 +68,11 @@ download_material_signal=space.signal("下载了课程资料")
 #提交课程作业
 upload_homework_signal=space.signal("提交了课程作业")
 
+#搜索活动或者课程
+search_course_activity=space.signal("搜索了课程或者活动")
+
+#进行路线规划
+route_search=space.signal("进行了路线规划")
 intoch = {1: '一', 2: '二', 3: '三', 4: '四', 5: '五', 6: '六', 0: '日'}
 def addhomework_act(sender):
     '''添加了作业'''
@@ -159,7 +164,14 @@ def upload_material(sender):#上传课程资料
     info=f"{g.uname}上传了{data.coursename}课程的{data.upload_material_name}资料"
     with open('logging.log', 'a', encoding='utf-8') as f:  # 打开日志然后写如
         f.write(f'{data.time_list[0]}-{data.time_list[1]}-{data.time_list[2]} 星期{intoch[int(data.time_list[3])]} {data.time_list[4]}:{data.time_list[5]}:{data.time_list[6]}\t' + info + "\n")  # 写入日志信息
-
+def search_course(sender): # 对课内课程进行了搜索
+    info=f"{g.uname}+{g.msg}"
+    with open('logging.log', 'a', encoding='utf-8') as f:  # 打开日志然后写如
+        f.write(f'{data.time_list[0]}-{data.time_list[1]}-{data.time_list[2]} 星期{intoch[int(data.time_list[3])]} {data.time_list[4]}:{data.time_list[5]}:{data.time_list[6]}\t' + info + "\n")  # 写入日志信息
+def route_arrange(sender): #进行了路线规划
+    info = f"{g.uname}+{g.msg}"
+    with open('logging.log', 'a', encoding='utf-8') as f:  # 打开日志然后写如
+        f.write(f'{data.time_list[0]}-{data.time_list[1]}-{data.time_list[2]} 星期{intoch[int(data.time_list[3])]} {data.time_list[4]}:{data.time_list[5]}:{data.time_list[6]}\t' + info + "\n")  # 写入日志信息
 logging_in.connect(logging_into)  # 注册这个日志信号
 login_space.connect(login_space_into)  # 注册信号
 in_course.connect(in_course_into)  # 进入了课内信息管理系统
@@ -174,3 +186,5 @@ add_homework.connect(addhomework_act)#添加了新的作业
 upload_homework_signal.connect(put_in_homework) # 上传作业
 upload_material_signal.connect(upload_material)#上传了课程资料
 download_material_signal.connect(download_material) #下载了课程资料
+search_course_activity.connect(search_course) #搜索了课程
+route_search.connect(route_arrange) #进行了路线规划

@@ -113,19 +113,11 @@ for (let j = 0;j<out_course_json.length;j++){
 }
 
 var in_course_time = document.getElementsByClassName("courseTime");
-// console.log(parseInt(in_course_time[1].innerHTML.substring(3, 5)));
-// console.log(parseInt(in_course_time[1].innerHTML.substring(6, 8)));
-// console.log(parseInt(in_course_time[1].innerHTML.substring(9, 11)));
-// console.log(parseInt(in_course_time[1].innerHTML.substring(12)));
 var course_name = document.getElementsByClassName("courseName");
-// console.log(course_name);
 var exam_time = document.getElementsByClassName("examTime");
 var out_course_begin_time = document.getElementsByClassName("outCourseBeginTime");
-// console.log(out_course_begin_time[1]["outerText"]);
 var out_course_end_time = document.getElementsByClassName("outCourseEndTime");
-// console.log(out_course_end_time[1]["outerText"]);
 var out_course_date = document.getElementsByClassName("outCourseDate");
-// console.log(out_course_date[1]["outerText"]);
 var out_course_name = document.getElementsByClassName("outCourseName");
 
 
@@ -200,12 +192,10 @@ function faketime() {
             class_end = true;
             out_course_begin = true;
             out_course_end = true;
-            //window.alert( course_name[i].innerHTML + "考试" + "开始了\n结束时间："+ endDate );
-            // window.alert(course_name_json[i] + "考试" + "开始了\n结束时间：" + endDate);
             generateRandom();
             music.play();//播放音乐
-            popupwindowtitle.innerHTML=course_name_json[i] + "考试" + "开始了\n结束时间：" + endDate;
-            popupwindowtitle.innerHTML="考试时间到";
+            popupwindowtitle.innerHTML="考试开始了";
+            popupwindowmsg.innerHTML=course_name_json[i] + "考试" + "开始了\n结束时间：" + endDate;
             popupwindow.style.display="block";
             break;
         }
@@ -216,8 +206,6 @@ function faketime() {
             class_end = false;
             out_course_begin = false;
             out_course_end = false;
-            //window.alert( course_name[i].innerHTML + "考试" + "结束了" );
-            // window.alert(course_name_json[i] + "考试结束了" );
             generateRandom();
             music.play();//播放音乐
             popupwindowtitle.innerHTML="考试";
@@ -341,7 +329,7 @@ function faketime() {
         url: "/time_control",
         data: time_json,
         success: function (result) {
-            console.log("")
+            console.log("successful!");
         }
     });
     requestcount++;

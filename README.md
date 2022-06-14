@@ -2141,7 +2141,7 @@ def file_encode(input_file):
 
 #### （4）与其他模块的关系
 
-![图片4](.\Images\图片4.png)
+![图片4](Images\图片4.png)
 
 ### 	8.总体各个模块的相互调用关系
 

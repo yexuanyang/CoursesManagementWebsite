@@ -335,7 +335,7 @@ def logging_fun():
 
 #### （4）与其他模块的关系
 
-![未命名文件 (4)](.\Images\未命名文件 (4).png)
+![未命名文件(4)](https://github.com/yexuanyang/CoursesManagementWebsite/blob/933ce7e889e7d7ae32de038f4818d51563518cbc/Images/%E6%9C%AA%E5%91%BD%E5%90%8D%E6%96%87%E4%BB%B64.png)
 
 ### 	2.课程管理模块
 
@@ -591,7 +591,7 @@ def out_course_del_fun():
 
 #### （4）与其他模块的关系
 
-![2(2)](https://github.com/yexuanyang/CoursesManagementWebsite/tree/master/Images/2(2).png)
+![2(2)](https://github.com/yexuanyang/CoursesManagementWebsite/blob/933ce7e889e7d7ae32de038f4818d51563518cbc/Images/2(2).png)
 
 ### 	3.课外活动管理模块
 
@@ -828,7 +828,7 @@ def out_course_del_fun():
 
 #### （4）与其他模块的关系
 
-![3](.\Images\3.png)
+![3](https://github.com/yexuanyang/CoursesManagementWebsite/blob/933ce7e889e7d7ae32de038f4818d51563518cbc/Images/3.png)
 
 ### 	4.登录模块：
 
@@ -1270,7 +1270,7 @@ button.addEventListener("click", function() {
 
 #### （4）与其他模块的关系
 
-![文件](.\Images\文件.png)
+![文件](https://github.com/yexuanyang/CoursesManagementWebsite/blob/933ce7e889e7d7ae32de038f4818d51563518cbc/Images/%E6%96%87%E4%BB%B6.png)
 
 ### 	6.时间模块
 
@@ -1741,7 +1741,7 @@ function route_organization() {
 
 #### （4）与其他模块的关系
 
-![图片](.\Images\图片.png)
+![图片](https://github.com/yexuanyang/CoursesManagementWebsite/blob/933ce7e889e7d7ae32de038f4818d51563518cbc/Images/%E5%9B%BE%E7%89%87.png)
 
 ### 	7.文件管理模块
 
@@ -2141,8 +2141,8 @@ def file_encode(input_file):
 
 #### （4）与其他模块的关系
 
-![图片4](.\Images\图片4.png)
+![图片4](https://github.com/yexuanyang/CoursesManagementWebsite/blob/933ce7e889e7d7ae32de038f4818d51563518cbc/Images/%E5%9B%BE%E7%89%874.png)
 
 ### 	8.总体各个模块的相互调用关系
 
-![未命名文件5](.\Images\未命名文件5.png)
+![未命名文件5](https://github.com/yexuanyang/CoursesManagementWebsite/blob/933ce7e889e7d7ae32de038f4818d51563518cbc/Images/%E6%9C%AA%E5%91%BD%E5%90%8D%E6%96%87%E4%BB%B65.png)

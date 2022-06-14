@@ -591,7 +591,7 @@ def out_course_del_fun():
 
 #### （4）与其他模块的关系
 
-![2(2)](.\Images\2(2).png)
+![2(2)]([.\Images\2(2).png](https://github.com/yexuanyang/CoursesManagementWebsite/tree/master/Images))
 
 ### 	3.课外活动管理模块
 
